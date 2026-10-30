@@ -1,0 +1,1103 @@
+[
+ {
+  "key": "ability_sharp",
+  "icon": "sigils/ability_sharp",
+  "group": "base",
+  "name": [
+   "Sharp Quills",
+   "Espinas afiladas"
+  ],
+  "text": [
+   "Whenever this card is struck, the striking card takes 1 damage.",
+   "Cada vez que golpean a esta carta, la carta que la golpea recibe 1 de daño."
+  ],
+  "when": [
+   "When struck",
+   "Al ser golpeada"
+  ]
+ },
+ {
+  "key": "ability_flying",
+  "icon": "sigils/ability_flying",
+  "group": "base",
+  "name": [
+   "Airborne",
+   "Aéreo"
+  ],
+  "text": [
+   "Ignores the card opposite and strikes the adversary directly.",
+   "Ignora la carta de enfrente y golpea directamente al adversario."
+  ],
+  "when": [
+   "On attack",
+   "Al atacar"
+  ]
+ },
+ {
+  "key": "ability_reach",
+  "icon": "sigils/ability_reach",
+  "group": "base",
+  "name": [
+   "Mighty Leap",
+   "Salto poderoso"
+  ],
+  "text": [
+   "Blocks opposing Airborne cards: they strike this card instead of the player.",
+   "Bloquea las cartas Aéreas del adversario: golpean a esta carta en vez de al jugador."
+  ],
+  "when": [
+   "Always active",
+   "Siempre activo"
+  ]
+ },
+ {
+  "key": "ability_evolve_1",
+  "icon": "sigils/ability_evolve_1",
+  "group": "base",
+  "name": [
+   "Fledgling",
+   "Polluelo"
+  ],
+  "text": [
+   "After surviving one turn, this card grows into its stronger form.",
+   "Si sobrevive un turno, esta carta se convierte en su forma más fuerte."
+  ],
+  "when": [
+   "At the start of your next turn",
+   "Al principio de tu siguiente turno"
+  ],
+  "pile": [
+   "Stronger forms are in the Upgrades pile.",
+   "Las formas más fuertes están en el montón de mejoras."
+  ]
+ },
+ {
+  "key": "ability_drawcopyondeath",
+  "icon": "sigils/ability_drawcopyondeath",
+  "group": "base",
+  "name": [
+   "Unkillable",
+   "Inmatable"
+  ],
+  "text": [
+   "When this card dies, it returns to your hand.",
+   "Cuando esta carta muere, vuelve a tu mano."
+  ],
+  "when": [
+   "On death",
+   "Al morir"
+  ]
+ },
+ {
+  "key": "ability_reborn",
+  "icon": "sigils/ability_reborn",
+  "group": "base",
+  "name": [
+   "Reborn",
+   "Renacido"
+  ],
+  "text": [
+   "Like Unkillable, but each time it returns it gains +1 power and +1 health. Resets every full game.",
+   "Como Inmatable, pero cada vez que vuelve gana +1 de poder y +1 de vida. Se reinicia en cada partida."
+  ],
+  "when": [
+   "On death",
+   "Al morir"
+  ]
+ },
+ {
+  "key": "ability_buffneighbours",
+  "icon": "sigils/ability_buffneighbours",
+  "group": "base",
+  "name": [
+   "Leader",
+   "Líder"
+  ],
+  "text": [
+   "Cards on both sides of this one get +1 power.",
+   "Las cartas a ambos lados de esta tienen +1 de poder."
+  ],
+  "when": [
+   "Always active",
+   "Siempre activo"
+  ]
+ },
+ {
+  "key": "ability_deathtouch",
+  "icon": "sigils/ability_deathtouch",
+  "group": "base",
+  "name": [
+   "Touch of Death",
+   "Toque de la muerte"
+  ],
+  "text": [
+   "Any card this one strikes dies at once.",
+   "Cualquier carta a la que golpee muere al instante."
+  ],
+  "when": [
+   "On attack",
+   "Al atacar"
+  ]
+ },
+ {
+  "key": "ability_whackamole",
+  "icon": "sigils/ability_whackamole",
+  "group": "base",
+  "name": [
+   "Burrower",
+   "Topo"
+  ],
+  "text": [
+   "Moves to any empty space of yours that is being struck, to block the attack.",
+   "Se mueve a cualquier espacio vacío tuyo que esté siendo atacado, para bloquear el ataque."
+  ],
+  "when": [
+   "Always active",
+   "Siempre activo"
+  ]
+ },
+ {
+  "key": "ability_guarddog",
+  "icon": "sigils/ability_guarddog",
+  "group": "base",
+  "name": [
+   "Guardian",
+   "Guardián"
+  ],
+  "text": [
+   "When the adversary plays a card opposite one of your empty spaces, this card moves there.",
+   "Cuando el adversario juega una carta enfrente de uno de tus espacios vacíos, esta carta se mueve allí."
+  ],
+  "when": [
+   "Always active",
+   "Siempre activo"
+  ]
+ },
+ {
+  "key": "ability_corpseeater",
+  "icon": "sigils/ability_corpseeater",
+  "group": "base",
+  "name": [
+   "Corpse Eater",
+   "Comecadáveres"
+  ],
+  "text": [
+   "When one of your cards dies in combat, you may play this card from your hand in its space for free, even on the adversary’s turn.",
+   "Cuando una de tus cartas muere en combate, puedes jugar esta carta desde tu mano en su espacio gratis, incluso en el turno del adversario."
+  ],
+  "when": [
+   "Always active",
+   "Siempre activo"
+  ]
+ },
+ {
+  "key": "ability_quadruplebones",
+  "icon": "sigils/ability_quadruplebones",
+  "group": "base",
+  "name": [
+   "Bone King",
+   "Rey de los huesos"
+  ],
+  "text": [
+   "When this card dies, you get 4 bones instead of 1.",
+   "Cuando esta carta muere, recibes 4 huesos en vez de 1."
+  ],
+  "when": [
+   "On death",
+   "Al morir"
+  ]
+ },
+ {
+  "key": "ability_drawrabbits",
+  "icon": "sigils/ability_drawrabbits",
+  "group": "base",
+  "name": [
+   "Rabbit Hole",
+   "Madriguera"
+  ],
+  "text": [
+   "When played, a Rabbit goes into your hand.",
+   "Al jugarla, un Conejo va a tu mano."
+  ],
+  "when": [
+   "When played",
+   "Al jugarla"
+  ],
+  "pile": [
+   "Rabbits are in the Swaps pile.",
+   "Los Conejos están en el montón de intercambios."
+  ]
+ },
+ {
+  "key": "ability_debuffenemy",
+  "icon": "sigils/ability_debuffenemy",
+  "group": "base",
+  "name": [
+   "Stinky",
+   "Apestoso"
+  ],
+  "text": [
+   "The card opposite this one has 1 less power.",
+   "La carta de enfrente tiene 1 de poder menos."
+  ],
+  "when": [
+   "Always active",
+   "Siempre activo"
+  ]
+ },
+ {
+  "key": "ability_splitstrike",
+  "icon": "sigils/ability_splitstrike",
+  "group": "base",
+  "name": [
+   "Bifurcated Strike",
+   "Golpe bifurcado"
+  ],
+  "text": [
+   "Strikes the two spaces diagonally opposite (left and right of the space across), not the one straight across.",
+   "Golpea los dos espacios en diagonal (a izquierda y derecha del de enfrente), no el de justo enfrente."
+  ],
+  "when": [
+   "On attack",
+   "Al atacar"
+  ]
+ },
+ {
+  "key": "ability_tristrike",
+  "icon": "sigils/ability_tristrike",
+  "group": "base",
+  "name": [
+   "Trifurcated Strike",
+   "Golpe trifurcado"
+  ],
+  "text": [
+   "Strikes the space across and the spaces to its left and right.",
+   "Golpea el espacio de enfrente y los espacios a su izquierda y derecha."
+  ],
+  "when": [
+   "On attack",
+   "Al atacar"
+  ]
+ },
+ {
+  "key": "ability_submerge",
+  "icon": "sigils/ability_submerge",
+  "group": "base",
+  "name": [
+   "Waterborne",
+   "Acuático"
+  ],
+  "text": [
+   "Turned face down on the adversary’s turn: attacks on its space hit you directly.",
+   "Se pone boca abajo en el turno del adversario: los ataques a su espacio te golpean directamente."
+  ],
+  "when": [
+   "On the adversary’s turn",
+   "En el turno del adversario"
+  ]
+ },
+ {
+  "key": "ability_tailonhit",
+  "icon": "sigils/ability_tailonhit",
+  "group": "base",
+  "name": [
+   "Loose Tail",
+   "Cola suelta"
+  ],
+  "text": [
+   "The first time it would be struck, a Wriggling Tail takes its place and takes the hit, and this card moves right (or left if there’s no room).",
+   "La primera vez que la vayan a golpear, una Cola Retorcida ocupa su lugar y recibe el golpe, y esta carta se mueve a la derecha (o a la izquierda si no hay sitio)."
+  ],
+  "when": [
+   "The first time it is struck",
+   "La primera vez que la golpean"
+  ],
+  "pile": [
+   "Wriggling Tail is in the Swaps pile.",
+   "La Cola Retorcida está en el montón de intercambios."
+  ]
+ },
+ {
+  "key": "ability_sacrificial",
+  "icon": "sigils/ability_sacrificial",
+  "group": "base",
+  "name": [
+   "Many Lives",
+   "Muchas vidas"
+  ],
+  "text": [
+   "When sacrificed, it doesn’t die: it stays on the board.",
+   "Al sacrificarla no muere: se queda en el tablero."
+  ],
+  "when": [
+   "When sacrificed",
+   "Al sacrificarla"
+  ]
+ },
+ {
+  "key": "ability_tripleblood",
+  "icon": "sigils/ability_tripleblood",
+  "group": "base",
+  "name": [
+   "Worthy Sacrifice",
+   "Sacrificio digno"
+  ],
+  "text": [
+   "Counts as 3 blood when sacrificed. Blood left over is lost.",
+   "Cuenta como 3 de sangre al sacrificarla. La sangre que sobre se pierde."
+  ],
+  "when": [
+   "When sacrificed",
+   "Al sacrificarla"
+  ]
+ },
+ {
+  "key": "ability_drawcopy",
+  "icon": "sigils/ability_drawcopy",
+  "group": "base",
+  "name": [
+   "Fecundity",
+   "Fecundidad"
+  ],
+  "text": [
+   "When played, a copy of this card without this sigil goes into your hand.",
+   "Al jugarla, una copia de esta carta sin este sello va a tu mano."
+  ],
+  "when": [
+   "When played",
+   "Al jugarla"
+  ],
+  "pile": [
+   "The copy is in the Swaps pile.",
+   "La copia está en el montón de intercambios."
+  ]
+ },
+ {
+  "key": "ability_strafe",
+  "icon": "sigils/ability_strafe",
+  "group": "base",
+  "name": [
+   "Sprinter",
+   "Velocista"
+  ],
+  "text": [
+   "After your turn, moves one space to your right; when it can’t, it turns around and keeps going the other way.",
+   "Después de tu turno se mueve un espacio a tu derecha; cuando no puede, se da la vuelta y sigue hacia el otro lado."
+  ],
+  "when": [
+   "After attacking",
+   "Después de atacar"
+  ]
+ },
+ {
+  "key": "ability_strafepush",
+  "icon": "sigils/ability_strafepush",
+  "group": "base",
+  "name": [
+   "Hefty",
+   "Robusto"
+  ],
+  "text": [
+   "Moves like Sprinter, pushing the cards in its way along with it.",
+   "Se mueve como Velocista, empujando las cartas que encuentra en su camino."
+  ],
+  "when": [
+   "After attacking",
+   "Después de atacar"
+  ]
+ },
+ {
+  "key": "ability_drawant",
+  "icon": "sigils/ability_drawant",
+  "group": "base",
+  "name": [
+   "Ant Spawner",
+   "Hormiga"
+  ],
+  "text": [
+   "When played, an Ant goes into your hand.",
+   "Al jugarla, una Hormiga va a tu mano."
+  ],
+  "when": [
+   "When played",
+   "Al jugarla"
+  ],
+  "pile": [
+   "Ants are in the Swaps pile.",
+   "Las Hormigas están en el montón de intercambios."
+  ]
+ },
+ {
+  "key": "ability_beesonhit",
+  "icon": "sigils/ability_beesonhit",
+  "group": "base",
+  "name": [
+   "Bees Within",
+   "Abejas dentro"
+  ],
+  "text": [
+   "Whenever this card is struck, a Bee goes into your hand.",
+   "Cada vez que golpean a esta carta, una Abeja va a tu mano."
+  ],
+  "when": [
+   "When struck",
+   "Al ser golpeada"
+  ],
+  "pile": [
+   "Bees are in the Swaps pile.",
+   "Las Abejas están en el montón de intercambios."
+  ]
+ },
+ {
+  "key": "ability_randomconsumable",
+  "icon": "sigils/ability_randomconsumable",
+  "group": "base",
+  "name": [
+   "Trinket Bearer",
+   "Portador de abalorios"
+  ],
+  "text": [
+   "When played, you draw an item, if you can hold one more.",
+   "Al jugarla, robas un objeto, si puedes tener uno más."
+  ],
+  "when": [
+   "When played",
+   "Al jugarla"
+  ],
+  "pile": [
+   "From the Items pile.",
+   "Del montón de objetos."
+  ]
+ },
+ {
+  "key": "ability_randomability",
+  "icon": "sigils/ability_randomability",
+  "group": "base",
+  "name": [
+   "Amorphous",
+   "Amorfo"
+  ],
+  "text": [
+   "Turn over cards from the shared draw pile until one has a single sigil: this card gains that sigil.",
+   "Destapa cartas del mazo de robo común hasta que una tenga un solo sello: esta carta gana ese sello."
+  ],
+  "when": [
+   "When played",
+   "Al jugarla"
+  ]
+ },
+ {
+  "key": "ability_tutor",
+  "icon": "sigils/ability_tutor",
+  "group": "base",
+  "name": [
+   "Hoarder",
+   "Acaparador"
+  ],
+  "text": [
+   "When played, choose any card from your deck and add it to your hand. Show it to your adversary, then shuffle your deck.",
+   "Al jugarla, elige cualquier carta de tu mazo y añádela a tu mano. Enséñasela a tu adversario y luego baraja tu mazo."
+  ],
+  "when": [
+   "When played",
+   "Al jugarla"
+  ]
+ },
+ {
+  "key": "ability_createdams",
+  "icon": "sigils/ability_createdams",
+  "group": "base",
+  "name": [
+   "Dam Builder",
+   "Constructor de presas"
+  ],
+  "text": [
+   "When played, Dams fill the empty spaces on both sides of it.",
+   "Al jugarla, se colocan Presas en los espacios vacíos a ambos lados."
+  ],
+  "when": [
+   "When played",
+   "Al jugarla"
+  ],
+  "pile": [
+   "Dams are in the Swaps pile.",
+   "Las Presas están en el montón de intercambios."
+  ]
+ },
+ {
+  "key": "ability_createbells",
+  "icon": "sigils/ability_createbells",
+  "group": "base",
+  "name": [
+   "Bellist",
+   "Campanero"
+  ],
+  "text": [
+   "When played, Chimes fill the empty spaces on both sides of it. When a Chime is struck, The Daus strikes back at the attacker.",
+   "Al jugarla, se colocan Campanillas en los espacios vacíos a ambos lados. Cuando golpean a una Campanilla, El Daus contraataca al atacante."
+  ],
+  "when": [
+   "When played",
+   "Al jugarla"
+  ],
+  "pile": [
+   "Chimes are in the Swaps pile.",
+   "Las Campanillas están en el montón de intercambios."
+  ]
+ },
+ {
+  "key": "ability_icecube",
+  "icon": "sigils/ability_icecube",
+  "group": "base",
+  "name": [
+   "Frozen Away",
+   "Congelado"
+  ],
+  "text": [
+   "When this card dies, an Opossum takes its place.",
+   "Cuando esta carta muere, una Zarigüeya ocupa su lugar."
+  ],
+  "when": [
+   "On death",
+   "Al morir"
+  ],
+  "pile": [
+   "The Opossum is in the Swaps pile.",
+   "La Zarigüeya está en el montón de intercambios."
+  ]
+ },
+ {
+  "key": "ability_drawwolf",
+  "icon": "sigils/ability_drawwolf",
+  "group": "base",
+  "name": [
+   "Caged",
+   "Enjaulado"
+  ],
+  "text": [
+   "When this card dies, the cage breaks: a Wolf takes its place.",
+   "Cuando esta carta muere, la jaula se rompe: un Lobo ocupa su lugar."
+  ],
+  "when": [
+   "On death",
+   "Al morir"
+  ],
+  "pile": [
+   "The Wolf is in the Upgrades pile.",
+   "El Lobo está en el montón de mejoras."
+  ]
+ },
+ {
+  "key": "ability_boneshedder",
+  "icon": "sigils/ability_boneshedder",
+  "group": "base",
+  "name": [
+   "Bone Shedder",
+   "Soltahuesos"
+  ],
+  "text": [
+   "Moves like Sprinter and leaves a Vertebrae in the space it leaves.",
+   "Se mueve como Velocista y deja una Vértebra en el espacio que abandona."
+  ],
+  "when": [
+   "After attacking",
+   "Después de atacar"
+  ],
+  "pile": [
+   "Vertebrae are in the Swaps pile.",
+   "Las Vértebras están en el montón de intercambios."
+  ]
+ },
+ {
+  "key": "ability_awoken",
+  "icon": "sigils/ability_awoken",
+  "group": "base",
+  "name": [
+   "Awoken",
+   "Despertado"
+  ],
+  "text": [
+   "When sacrificed, the card swaps to its other version.",
+   "Al sacrificarla, la carta cambia a su otra versión."
+  ],
+  "when": [
+   "When sacrificed",
+   "Al sacrificarla"
+  ]
+ },
+ {
+  "key": "ability_bonedigger",
+  "icon": "sigils/ability_bonedigger",
+  "group": "kaycee",
+  "name": [
+   "Bone Digger",
+   "Excavador"
+  ],
+  "text": [
+   "At the end of your turn, you get 1 bone.",
+   "Al final de tu turno, recibes 1 hueso."
+  ],
+  "when": [
+   "At the end of your turn",
+   "Al final de tu turno"
+  ]
+ },
+ {
+  "key": "ability_brittle",
+  "icon": "sigils/ability_brittle",
+  "group": "kaycee",
+  "name": [
+   "Brittle",
+   "Frágil"
+  ],
+  "text": [
+   "After attacking, this card dies.",
+   "Después de atacar, esta carta muere."
+  ],
+  "when": [
+   "After attacking",
+   "Después de atacar"
+  ]
+ },
+ {
+  "key": "ability_deathshield",
+  "icon": "sigils/ability_deathshield",
+  "group": "kaycee",
+  "name": [
+   "Armored",
+   "Blindado"
+  ],
+  "text": [
+   "The first time this card would take damage, the damage is blocked.",
+   "La primera vez que esta carta fuera a recibir daño, el daño se bloquea."
+  ],
+  "when": [
+   "The first time it is struck",
+   "La primera vez que la golpean"
+  ]
+ },
+ {
+  "key": "ability_doublestrike",
+  "icon": "sigils/ability_doublestrike",
+  "group": "kaycee",
+  "name": [
+   "Double Strike",
+   "Doble golpe"
+  ],
+  "text": [
+   "Strikes the space across twice.",
+   "Golpea dos veces el espacio de enfrente."
+  ],
+  "when": [
+   "On attack",
+   "Al atacar"
+  ]
+ },
+ {
+  "key": "ability_gainattackonkill",
+  "icon": "sigils/ability_gainattackonkill",
+  "group": "kaycee",
+  "name": [
+   "Blood Lust",
+   "Sed de sangre"
+  ],
+  "text": [
+   "Each time this card kills a card it strikes, it gains 1 power.",
+   "Cada vez que esta carta mata a la carta que golpea, gana 1 de poder."
+  ],
+  "when": [
+   "On attack",
+   "Al atacar"
+  ]
+ },
+ {
+  "key": "ability_morsel",
+  "icon": "sigils/ability_morsel",
+  "group": "kaycee",
+  "name": [
+   "Morsel",
+   "Bocado"
+  ],
+  "text": [
+   "When sacrificed, the card it was sacrificed for gains its power and health.",
+   "Al sacrificarla, la carta por la que se sacrificó gana su poder y su vida."
+  ],
+  "when": [
+   "When sacrificed",
+   "Al sacrificarla"
+  ]
+ },
+ {
+  "key": "ability_opponentbones",
+  "icon": "sigils/ability_opponentbones",
+  "group": "kaycee",
+  "name": [
+   "Scavenger",
+   "Carroñero"
+  ],
+  "text": [
+   "While this card is on the board, you also get bones when the adversary’s cards die.",
+   "Mientras esta carta esté en el tablero, también recibes huesos cuando mueren las cartas del adversario."
+  ],
+  "when": [
+   "Always active",
+   "Siempre activo"
+  ]
+ },
+ {
+  "key": "ability_preventattack",
+  "icon": "sigils/ability_preventattack",
+  "group": "kaycee",
+  "name": [
+   "Repulsive",
+   "Repulsivo"
+  ],
+  "text": [
+   "The card across from this one refuses to attack: it doesn’t strike at all.",
+   "La carta de enfrente se niega a atacar: no golpea en absoluto."
+  ],
+  "when": [
+   "Always active",
+   "Siempre activo"
+  ]
+ },
+ {
+  "key": "ability_strafeswap",
+  "icon": "sigils/ability_strafeswap",
+  "group": "kaycee",
+  "name": [
+   "Rampager",
+   "Arrasador"
+  ],
+  "text": [
+   "After your turn, moves one space along, swapping places with any card in the way; turns around at the edge.",
+   "Después de tu turno se mueve un espacio, intercambiando su sitio con cualquier carta en su camino; se da la vuelta en el borde."
+  ],
+  "when": [
+   "After attacking",
+   "Después de atacar"
+  ]
+ },
+ {
+  "key": "ability_createegg",
+  "icon": "sigils/ability_createegg",
+  "group": "kaycee",
+  "name": [
+   "Brood Parasite",
+   "Parásito de cría"
+  ],
+  "text": [
+   "When played, an egg is placed in the space across from it, if empty: roll the d20: on a 1 or a 2 it’s a Raven Egg, otherwise a Broken Egg (both in the swaps pile). The egg belongs to the adversary.",
+   "Al jugarla, se coloca un huevo en el espacio de enfrente, si está vacío: tira el d20: con un 1 o un 2 es un Huevo de cuervo, si no un Huevo roto (los dos en el montón de intercambios). El huevo es del adversario."
+  ],
+  "when": [
+   "When played",
+   "Al jugarla"
+  ]
+ },
+ {
+  "key": "ability_submergesquid",
+  "icon": "sigils/ability_submergesquid",
+  "group": "kaycee",
+  "name": [
+   "Waterborne (Kraken)",
+   "Acuático (Kraken)"
+  ],
+  "text": [
+   "Like Waterborne. When it comes back up, it turns into a random tentacle: shuffle the tentacles of the swaps pile face down and take one.",
+   "Como Acuático. Cuando vuelve a salir, se convierte en un tentáculo al azar: baraja boca abajo los tentáculos del montón de intercambios y coge uno."
+  ],
+  "when": [
+   "On the adversary’s turn",
+   "En el turno del adversario"
+  ]
+ },
+ {
+  "key": "ability_evolve_2",
+  "icon": "sigils/ability_evolve_2",
+  "group": "kaycee",
+  "name": [
+   "Fledgling (2 turns)",
+   "Polluelo (2 turnos)"
+  ],
+  "text": [
+   "After surviving two turns, this card grows into its stronger form.",
+   "Si sobrevive dos turnos, esta carta se convierte en su forma más fuerte."
+  ],
+  "when": [
+   "At the start of your second turn after playing it",
+   "Al principio de tu segundo turno tras jugarla"
+  ],
+  "pile": [
+   "Stronger forms are in the Upgrades pile.",
+   "Las formas más fuertes están en el montón de mejoras."
+  ]
+ },
+ {
+  "key": "ability_squirrelstrafe",
+  "icon": "sigils/ability_squirrelstrafe",
+  "group": "kaycee",
+  "name": [
+   "Squirrel Shedder",
+   "Soltaardillas"
+  ],
+  "text": [
+   "Moves like Sprinter and leaves a Squirrel in the space it leaves.",
+   "Se mueve como Velocista y deja una Ardilla en el espacio que abandona."
+  ],
+  "when": [
+   "After attacking",
+   "Después de atacar"
+  ],
+  "pile": [
+   "A Squirrel already sacrificed if there is one, otherwise one from the Squirrel pile; with Kaycee’s Mod, a spare one: it doesn’t count against your 10.",
+   "Una Ardilla ya sacrificada si la hay, si no una del montón de Ardillas; con Kaycee’s Mod, una de las que sobran: no cuenta para tus 10."
+  ]
+ },
+ {
+  "key": "ability_madeofstone",
+  "icon": "sigils/ability_madeofstone",
+  "group": "kaycee",
+  "name": [
+   "Made of Stone",
+   "De piedra"
+  ],
+  "text": [
+   "Touch of Death and Stinky have no effect on this card.",
+   "Toque de la muerte y Apestoso no afectan a esta carta."
+  ],
+  "when": [
+   "Always active",
+   "Siempre activo"
+  ]
+ },
+ {
+  "key": "ability_sentry",
+  "icon": "sigils/ability_sentry",
+  "group": "kaycee",
+  "name": [
+   "Sentry",
+   "Centinela"
+  ],
+  "text": [
+   "When a card moves into the space across from this card, it takes 1 damage.",
+   "Cuando una carta se mueve al espacio de enfrente de esta carta, recibe 1 de daño."
+  ],
+  "when": [
+   "When a card moves across",
+   "Cuando una carta se pone enfrente"
+  ]
+ },
+ {
+  "key": "ability_buffenemy",
+  "icon": "sigils/ability_buffenemy",
+  "group": "kaycee",
+  "name": [
+   "Annoying",
+   "Molesto"
+  ],
+  "text": [
+   "The card across from this card has 1 more power.",
+   "La carta de enfrente de esta carta tiene 1 de poder más."
+  ],
+  "when": [
+   "Always active",
+   "Siempre activo"
+  ]
+ },
+ {
+  "key": "arrow_4_sides",
+  "icon": "sigils/arrow_4_sides",
+  "group": "kaycee",
+  "name": [
+   "Wanderer",
+   "Errante"
+  ],
+  "text": [
+   "At the end of each turn, the player whose turn it was must move this card one space, to an empty space beside it or across from it (along its row or to the other side). It only stays if it can’t move.",
+   "Al final de cada turno, el jugador del turno debe mover esta carta un espacio, a un espacio vacío a su lado o enfrente (por su fila o al otro lado). Solo se queda si no puede moverse."
+  ],
+  "when": [
+   "At the end of each turn",
+   "Al final de cada turno"
+  ]
+ },
+ {
+  "key": "ability_pelt_lice",
+  "icon": "sigils/ability_pelt_lice",
+  "group": "pelts",
+  "name": [
+   "Stowaway",
+   "Polizón"
+  ],
+  "text": [
+   "When you play any pelt, every Pelt Lice in your hand or deck plays itself for free into an empty space of your choice (shuffle your deck after). The ones without room wait for your next pelt.",
+   "Cuando juegas cualquier piel, todos los Piojos de piel de tu mano o de tu mazo se juegan solos, gratis, en espacios vacíos que elijas (después baraja tu mazo). Los que no caben esperan a tu siguiente piel."
+  ],
+  "when": [
+   "When you play a pelt",
+   "Al jugar una piel"
+  ]
+ },
+ {
+  "key": "ability_halfstrike",
+  "icon": "sigils/ability_halfstrike",
+  "group": "kaycee",
+  "name": [
+   "Broadside",
+   "Andanada"
+  ],
+  "text": [
+   "Strikes the two spaces across from it: a card there takes the damage, an empty space hits the player of that column. Then the ship sails one space along, turning around at the edge.",
+   "Golpea los dos espacios de enfrente: una carta allí recibe el daño, un espacio vacío golpea al jugador de esa columna. Después el barco navega un espacio, dando la vuelta en el borde."
+  ],
+  "when": [
+   "On the ship’s turn",
+   "En el turno del barco"
+  ]
+ },
+ {
+  "key": "skeleton_mutiny",
+  "icon": "sigils/skeleton_mutiny",
+  "group": "kaycee",
+  "name": [
+   "Mutiny",
+   "Motín"
+  ],
+  "text": [
+   "Once the ship is at half health or less, a crew card joins the players after each of its attacks: after the ship sails, put it in an empty space across from the ship; it belongs to that column’s player. Shuffle the Skeleton Crew and Zombie Parrots face down and take one.",
+   "Cuando el barco tiene la mitad de vida o menos, una carta de la tripulación se une a los jugadores después de cada uno de sus ataques: después de navegar el barco, ponla en un espacio vacío de enfrente; es del jugador de esa columna. Baraja boca abajo las Tripulaciones esqueleto y los Loros zombi y coge una."
+  ],
+  "when": [
+   "After the ship attacks",
+   "Después de atacar el barco"
+  ],
+  "pile": [
+   "Skeleton Crew and Zombie Parrots are in the Swaps pile.",
+   "Las Tripulaciones esqueleto y los Loros zombi están en el montón de intercambios."
+  ]
+ },
+ {
+  "key": "ability_hydraegg",
+  "icon": "sigils/ability_hydraegg",
+  "group": "kaycee",
+  "name": [
+   "Hydra Egg",
+   "Huevo de hidra"
+  ],
+  "text": [
+   "When there is a card of each tribe on the board, counting both sides (bird, canine, hooved, insect and reptile), this card hatches into the Hydra.",
+   "Cuando en el tablero, contando los dos lados, hay una carta de cada tribu (pájaro, cánido, ungulado, insecto y reptil), esta carta eclosiona en la Hidra."
+  ],
+  "when": [
+   "Always active",
+   "Siempre activo"
+  ],
+  "pile": [
+   "The Hydra is in the Upgrades pile.",
+   "La Hidra está en el montón de mejoras."
+  ]
+ },
+ {
+  "key": "stat:ants",
+  "icon": "stats/ants_stat_icon",
+  "group": "base",
+  "name": [
+   "Ant Damage",
+   "Daño de hormigas"
+  ],
+  "text": [
+   "Power equals the number of your Ants in play.",
+   "Su poder es igual al número de Hormigas tuyas en juego."
+  ],
+  "when": [
+   "Always active",
+   "Siempre activo"
+  ]
+ },
+ {
+  "key": "stat:bell",
+  "icon": "stats/bell_stat_icon",
+  "group": "base",
+  "name": [
+   "Ringer",
+   "Repicar"
+  ],
+  "text": [
+   "Power depends on how close it is to the bell: 4 in the closest space, down to 1 in the farthest.",
+   "Su poder depende de lo cerca que esté de la campana: 4 en el espacio más cercano, hasta 1 en el más lejano."
+  ],
+  "when": [
+   "Always active",
+   "Siempre activo"
+  ]
+ },
+ {
+  "key": "stat:cardsinhand",
+  "icon": "stats/cardsinhand_stat_icon",
+  "group": "base",
+  "name": [
+   "Handy",
+   "Mañoso"
+  ],
+  "text": [
+   "Power equals the number of cards in your hand.",
+   "Su poder es igual al número de cartas en tu mano."
+  ],
+  "when": [
+   "Always active",
+   "Siempre activo"
+  ]
+ },
+ {
+  "key": "stat:sacrifices",
+  "icon": "stats/sacrifices_stat_icon",
+  "group": "kaycee",
+  "name": [
+   "Sacrifices",
+   "Sacrificios"
+  ],
+  "text": [
+   "Power equals the number of cards you’ve sacrificed this round (keep count with tokens).",
+   "Su poder es igual al número de cartas que has sacrificado en esta ronda (lleva la cuenta con fichas)."
+  ],
+  "when": [
+   "Always active",
+   "Siempre activo"
+  ]
+ },
+ {
+  "key": "stat:bones",
+  "icon": "stats/bones_stat_icon",
+  "group": "kaycee",
+  "name": [
+   "Bones",
+   "Huesos"
+  ],
+  "text": [
+   "Power equals half the number of bones you have, rounded down.",
+   "Su poder es la mitad de los huesos que tienes, redondeando hacia abajo."
+  ],
+  "when": [
+   "Always active",
+   "Siempre activo"
+  ]
+ },
+ {
+  "key": "other:Rorrim",
+  "icon": "other/rorrim",
+  "group": "base",
+  "name": [
+   "Rorrim",
+   "Ojepse"
+  ],
+  "text": [
+   "Power equals the power of the card across from it, or 0 if there is none.",
+   "Su poder es igual al de la carta de enfrente, o 0 si no hay ninguna."
+  ],
+  "when": [
+   "Always active",
+   "Siempre activo"
+  ]
+ }
+]
