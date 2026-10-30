@@ -149,13 +149,25 @@ export const toUpgrades = (g: Game, rng: Rng): Game => ({
   phase: { kind: 'pick', group: 'upgrade', tokens: drawSome(upgradeTokens(g), 3, rng), picks: [] },
 });
 
-/** Takes a token: first the round's loser, then the other player; then both play them. */
-export function pickToken(g: Game, token: Token, rng: Rng): Game {
+/** Takes a token: first the round's loser, then the other player. Nothing happens until they confirm. */
+export function pickToken(g: Game, token: Token): Game {
   const { phase } = g;
-  if (phase.kind !== 'pick' || !phase.tokens.includes(token) || phase.picks.includes(token)) return g;
-  const picks = [...phase.picks, token];
-  if (picks.length < 2) return { ...g, phase: { ...phase, picks } };
-  return { ...g, phase: { kind: 'play', group: phase.group, picks, turn: 0, activity: enter(g, picks[0], rng) } };
+  if (phase.kind !== 'pick' || phase.picks.length >= 2 || !phase.tokens.includes(token) || phase.picks.includes(token)) return g;
+  return { ...g, phase: { ...phase, picks: [...phase.picks, token] } };
+}
+
+/** Takes back the last choice. */
+export function unpickToken(g: Game): Game {
+  const { phase } = g;
+  if (phase.kind !== 'pick' || !phase.picks.length) return g;
+  return { ...g, phase: { ...phase, picks: phase.picks.slice(0, -1) } };
+}
+
+/** Both have chosen: they play their events, the round's loser first. */
+export function confirmPicks(g: Game, rng: Rng): Game {
+  const { phase } = g;
+  if (phase.kind !== 'pick' || phase.picks.length < 2) return g;
+  return { ...g, phase: { kind: 'play', group: phase.group, picks: phase.picks, turn: 0, activity: enter(g, phase.picks[0], rng) } };
 }
 
 /** What an event reveals when a player starts it. */

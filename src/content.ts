@@ -111,7 +111,7 @@ export const ALWAYS_BASE: T[] = [
 export const ALWAYS_KAYCEE: T[] = [
   ['Each player can hold up to 3 items. Used items go to the bottom of the pile.', 'Cada jugador puede tener hasta 3 objetos. Los objetos usados van al fondo del montón.'],
   ['10 Squirrels per player per round. Out of Squirrels, out of luck. Squirrels from a bottle, the Squirrel Ball or the Pack Mule don’t count.', '10 Ardillas por jugador y ronda. Sin Ardillas, mala suerte. Las de la botella, la Bola de ardillas o la Mula de carga no cuentan.'],
-  ['Cat and Child 13: roll the d20 after each sacrifice (Cat: a 7 makes it the Undead Cat; Child 13: a 13 makes it the Hungry Child).', 'Gato y Niña 13: tira el d20 tras cada sacrificio (Gato: con un 7 es el Gato no muerto; Niña 13: con un 13 es la Niña hambrienta).'],
+  ['Cat and Child 13: roll the d20 after each sacrifice. Cat: a 7 makes it the Undead Cat. Child 13: a 13 makes it the Hungry Child, which can’t be killed and doesn’t block. Both last only that round.', 'Gato y Niña 13: tira el d20 tras cada sacrificio. Gato: con un 7 es el Gato no muerto. Niña 13: con un 13 es la Niña hambrienta, que no se puede matar y no bloquea. Los dos duran solo esa ronda.'],
 ];
 
 /** The groups of the Cards list, in order. `sharedBack`: its back doesn't tell it apart from cards of another set. */

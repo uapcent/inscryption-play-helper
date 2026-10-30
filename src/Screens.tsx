@@ -1,5 +1,7 @@
-import { useEffect, useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
+import { GROUPS } from './CardSheet';
 import { CardsView } from './CardsView';
+import { TRICKY_CARDS } from './notes';
 import { BoardTour, ExampleBoard, LimoncelloBoard, ProspectorBoard } from './Board';
 import {
   ALWAYS, ALWAYS_BASE, ALWAYS_KAYCEE, BOON_TEXT, DEATH_CARD_STEPS, EVENTS, HEAD_ICONS, HEAD_NAMES, TRIALS, TURN_STEPS,
@@ -7,7 +9,7 @@ import {
 import * as G from './game';
 import type { Activity, Carry, Game, Player, Token } from './game';
 import { sigilByKey } from './Sigils';
-import { Card, Choice, Coin, D20, Die, Steps, Token as EventToken, motionMs, useLite, useMedia, useSettled, useT } from './ui';
+import { CardSheetContext, Card, Choice, Coin, D20, Die, Steps, Token as EventToken, motionMs, useLite, useMedia, useSettled, useT } from './ui';
 
 /** Applies a move; the app saves it and keeps it for undo. */
 export type Move = (f: (g: Game) => Game) => void;
@@ -220,6 +222,25 @@ function ProspectorPanel({ g, move }: ScreenProps) {
   );
 }
 
+/** The complicated cards in this game: each opens its page, with its tutorial. */
+function TrickyCards({ g }: { g: Game }) {
+  const t = useT();
+  const open = useContext(CardSheetContext);
+  const list = TRICKY_CARDS.flatMap((id) => {
+    const group = GROUPS.find((x) => x.cards.some((c) => c.id === id));
+    const inGame = group && (!group.id.startsWith('kaycee:') || g.kaycee) && (!group.id.startsWith('pelts:') || g.pelts);
+    return inGame ? [group.cards.find((c) => c.id === id)!] : [];
+  });
+  return (
+    <details className="reminders">
+      <summary>{t(['Cards with tricks', 'Cartas con truco'])}</summary>
+      <div className="tricky-list">
+        {list.map((c) => <button key={c.id} type="button" onClick={() => open(c.id)}>{t(c.name)}</button>)}
+      </div>
+    </details>
+  );
+}
+
 export function RoundScreen({ g, move }: ScreenProps) {
   const t = useT();
   const name = useNames(g);
@@ -253,6 +274,7 @@ export function RoundScreen({ g, move }: ScreenProps) {
 
       {G.isProspectorRound(g) && <ProspectorPanel g={g} move={move} />}
 
+      <TrickyCards g={g} />
       <details className="reminders">
         <summary>{t(['Show the board', 'Ver el tablero'])}</summary>
         <ExampleBoard names={[name(0), name(1)]} />
@@ -405,7 +427,7 @@ export function PickScreen({ g, move }: ScreenProps) {
   const name = useNames(g);
   if (g.phase.kind !== 'pick') return null;
   const { group, tokens, picks } = g.phase;
-  const chooser = G.turnPlayer(g, picks.length as 0 | 1);
+  const chooser = picks.length < 2 ? G.turnPlayer(g, picks.length as 0 | 1) : null;
   const upgrade = group === 'upgrade';
   return (
     <>
@@ -414,7 +436,9 @@ export function PickScreen({ g, move }: ScreenProps) {
       <p className="lead">{upgrade
         ? t(['These 3 came up at random. They’re safe.', 'Han salido estas 3 al azar. Son seguras.'])
         : t(['These can be lost.', 'Estos se pueden perder.'])}</p>
-      <p className="prompt">{t([`${name(chooser)} chooses`, `Elige ${name(chooser)}`])}</p>
+      <p className="prompt">{chooser === null
+        ? t(['Both have chosen. Confirm, or go back to change it.', 'Ya habéis elegido. Confirmad, o volved atrás para cambiarlo.'])
+        : t([`${name(chooser)} chooses`, `Elige ${name(chooser)}`])}</p>
       <div className="choices pick-list">
         {tokens.map((token, i) => {
           const taken = picks.indexOf(token);
@@ -425,12 +449,17 @@ export function PickScreen({ g, move }: ScreenProps) {
               token={<EventToken icon={`nodes/${e.icon}`} group={group} i={i} />}
               title={t(e.name)}
               text={t(e.text)}
-              disabled={taken >= 0}
+              disabled={taken >= 0 || chooser === null}
+              selected={taken >= 0}
               note={taken >= 0 ? name(G.turnPlayer(g, taken as 0 | 1)) : undefined}
-              onClick={() => move((s) => G.pickToken(s, token, Math.random))}
+              onClick={() => move((s) => G.pickToken(s, token))}
             />
           );
         })}
+      </div>
+      <div className="row pick-actions">
+        <button type="button" disabled={!picks.length} onClick={() => move(G.unpickToken)}>{t(['Back', 'Atrás'])}</button>
+        <button type="button" className="primary" disabled={chooser !== null} onClick={() => move((s) => G.confirmPicks(s, Math.random))}>{t(['Confirm', 'Confirmar'])}</button>
       </div>
     </>
   );

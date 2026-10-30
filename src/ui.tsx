@@ -19,6 +19,8 @@ export function defaultLite() {
   const nav = navigator as Navigator & { deviceMemory?: number };
   return (nav.deviceMemory !== undefined && nav.deviceMemory <= 2) || (nav.hardwareConcurrency !== undefined && nav.hardwareConcurrency <= 2);
 }
+/** Opens a card's page, from anywhere. */
+export const CardSheetContext = createContext<(id: string) => void>(() => {});
 export const LiteContext = createContext<{ lite: boolean; setLite: (on: boolean) => void }>({ lite: false, setLite: () => {} });
 export const useLite = () => useContext(LiteContext);
 let liteNow = false;

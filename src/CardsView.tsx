@@ -1,12 +1,13 @@
-import { CARD_GROUPS, type T } from './content';
-import cardData from './data/cards.json';
-import { iconUrl, useT } from './ui';
+import { useContext, useState } from 'react';
+import { CARD_GROUPS } from './content';
+import { GROUPS, type CardGroup } from './CardSheet';
+import { CARD_NOTES } from './notes';
+import { CardSheetContext, iconUrl, useT } from './ui';
 
-interface CardGroup { id: string; back: string; cards: { name: T; qty: number }[] }
-
-const GROUPS = cardData as unknown as CardGroup[];
 const byId = (id: string) => GROUPS.find((g) => g.id === id);
 const copies = (g: CardGroup) => g.cards.reduce((sum, c) => sum + c.qty, 0);
+/** Lower case without accents, so "vibora" finds "Víbora". */
+const plain = (s: string) => s.normalize('NFD').replace(/\p{Diacritic}/gu, '').toLowerCase();
 
 /** A group is in play when its expansion is. */
 function inPlay(id: string, kaycee: boolean, pelts: boolean) {
@@ -32,6 +33,7 @@ function GroupRow({ id, i, byName }: { id: string; i: number; byName?: boolean }
   const meta = CARD_GROUPS.find((m) => m.id === id);
   if (!g || !meta) return null;
   const n = copies(g);
+  const open = useContext(CardSheetContext);
   return (
     <details className="card-group" style={{ animationDelay: `${Math.min(i, 10) * 45}ms` }}>
       <summary>
@@ -44,7 +46,11 @@ function GroupRow({ id, i, byName }: { id: string; i: number; byName?: boolean }
         <span className="group-count">{n}</span>
       </summary>
       <ul className="card-names">
-        {g.cards.map((c) => <li key={c.name[0] + c.name[1]}>{t(c.name)}{c.qty > 1 && <i> ×{c.qty}</i>}</li>)}
+        {g.cards.map((c) => (
+          <li key={c.id}>
+            <button type="button" className={`card-name${CARD_NOTES[c.id]?.tutorial ? ' tricky' : ''}`} onClick={() => open(c.id)}>{t(c.name)}{c.qty > 1 && <i> ×{c.qty}</i>}</button>
+          </li>
+        ))}
       </ul>
     </details>
   );
@@ -58,10 +64,40 @@ export function CardsView({ kaycee, pelts }: { kaycee: boolean; pelts: boolean }
   const out = known.filter((m) => !inPlay(m.id, kaycee, pelts));
   const total = (list: typeof known) => list.reduce((sum, m) => sum + copies(byId(m.id)!), 0);
   const sharedBack = out.filter((m) => m.sharedBack);
+  const open = useContext(CardSheetContext);
+  const [q, setQ] = useState('');
+  const query = plain(q.trim());
+  const found = query
+    ? GROUPS.flatMap((g) => g.cards.filter((c) => plain(`${c.name[0]} ${c.name[1]}`).includes(query)).map((c) => ({ c, g, left: !inPlay(g.id, kaycee, pelts) })))
+    : [];
+  const search = (
+    <input type="search" className="search" placeholder={t(['Search a card or an item', 'Buscar una carta o un objeto'])} aria-label={t(['Search a card or an item', 'Buscar una carta o un objeto'])} value={q} onChange={(e) => setQ(e.target.value)} />
+  );
+  if (query) {
+    return (
+      <>
+        <h1>{t(['Your cards', 'Vuestras cartas'])}</h1>
+        {search}
+        <ul className="found">
+          {found.map(({ c, g, left }) => (
+            <li key={c.id}>
+              <button type="button" className="found-card" onClick={() => open(c.id)}>
+                <img src={iconUrl(`backs/${g.back}`)} alt="" />
+                <span><b>{t(c.name)}</b>{left && <em>{t(['In the box this game', 'En la caja en esta partida'])}</em>}</span>
+                {CARD_NOTES[c.id]?.tutorial && <small>{t(['Tutorial', 'Tutorial'])}</small>}
+              </button>
+            </li>
+          ))}
+        </ul>
+        {!found.length && <p className="muted">{t(['No card matches.', 'Ninguna carta coincide.'])}</p>}
+      </>
+    );
+  }
   return (
     <>
       <h1>{t(['Your cards', 'Vuestras cartas'])}</h1>
-      <p className="lead">{t(['Sort by the backs. Tap a group for its names.', 'Separadlas por el dorso. Toca un grupo para ver los nombres.'])}</p>
+      <p className="lead">{t(['Sort by the backs. Tap a group for its names, and a name for what the card does.', 'Separadlas por el dorso. Toca un grupo para ver los nombres, y un nombre para saber qué hace la carta.'])}</p>
+      {search}
       <h2>{t([`Use these: ${total(used)} cards`, `Usad estas: ${total(used)} cartas`])}</h2>
       <div className="card-groups">{used.map((m, i) => <GroupRow key={m.id} id={m.id} i={i} />)}</div>
       <h2>{t([`Leave in the box: ${total(out)} cards`, `Dejad en la caja: ${total(out)} cartas`])}</h2>

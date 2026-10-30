@@ -1,9 +1,9 @@
 import assert from 'node:assert/strict';
 import { test } from 'node:test';
 import {
-  BOONS, DECK_TRIALS, altarBoon, canFinish, carriedNow, chooseBoon, chooseOption, chooseStone, drawFirst, drawSome, finishDeath, finishEvent, finishLimoncello,
+  BOONS, DECK_TRIALS, altarBoon, canFinish, carriedNow, chooseBoon, chooseOption, chooseStone, confirmPicks, drawFirst, drawSome, finishDeath, finishEvent, finishLimoncello,
   leshyTrials, limoncelloResult, loseLife, newGame, offer, pickToken, prospectorTurn, setStones, smokeFor, start, toCardDraft, toLimoncelloEnd, toPrepare, toUpgrades,
-  trialResult, upgradeTokens, wakeProspector, type Game, type Token,
+  trialResult, unpickToken, upgradeTokens, wakeProspector, type Game, type Token,
 } from '../src/game.ts';
 
 setStones(['ability_flying', 'ability_sharp', 'ability_reach', 'ability_strafe']);
@@ -23,7 +23,7 @@ function playBreak(g: Game, rng: () => number): Game {
   g = toUpgrades(toCardDraft(g), rng);
   for (let i = 0; i < 40 && g.phase.kind !== 'round'; i++) {
     const p = g.phase;
-    if (p.kind === 'pick') g = pickToken(g, p.tokens.find((t) => !p.picks.includes(t)) as Token, rng);
+    if (p.kind === 'pick') g = p.picks.length === 2 ? confirmPicks(g, rng) : pickToken(g, p.tokens.find((t) => !p.picks.includes(t)) as Token);
     else if (p.kind === 'play') {
       const a = p.activity;
       const token = p.picks[p.turn];
@@ -91,13 +91,34 @@ test('the loser picks first; a player cannot take a token already taken', () => 
   assert.equal(g.loser, 1);
   if (g.phase.kind !== 'pick') assert.fail();
   const [a, b] = g.phase.tokens;
-  g = pickToken(g, a, rng);
-  const again = pickToken(g, a, rng);
+  g = pickToken(g, a);
+  const again = pickToken(g, a);
   assert.deepEqual(again, g);
-  g = pickToken(g, b, rng);
+  g = pickToken(g, b);
+  if (g.phase.kind !== 'pick') assert.fail('the page must not move on by itself');
+  assert.deepEqual(g.phase.picks, [a, b]);
+  assert.deepEqual(pickToken(g, g.phase.tokens[2]), g, 'no third pick');
+  g = confirmPicks(g, rng);
   if (g.phase.kind !== 'play') assert.fail();
   assert.deepEqual(g.phase.picks, [a, b]);
   assert.equal(g.phase.turn, 0);
+});
+
+test('Back takes back the last choice, and Confirm needs both', () => {
+  const rng = seeded(3);
+  let g = toUpgrades(toCardDraft(loseLife(kaycee(), 1)), rng);
+  if (g.phase.kind !== 'pick') assert.fail();
+  const [a, b, c] = g.phase.tokens;
+  assert.deepEqual(unpickToken(g), g, 'nothing to take back yet');
+  g = pickToken(g, a);
+  assert.deepEqual(confirmPicks(g, rng), g, 'one choice is not enough');
+  g = pickToken(g, b);
+  g = unpickToken(g);
+  if (g.phase.kind !== 'pick') assert.fail();
+  assert.deepEqual(g.phase.picks, [a]);
+  g = confirmPicks(pickToken(g, c), rng);
+  if (g.phase.kind !== 'play') assert.fail();
+  assert.deepEqual(g.phase.picks, [a, c]);
 });
 
 test('the Trading Post and the Trial of Skins need the Pelts expansion', () => {
@@ -185,9 +206,9 @@ test('the Limoncello replaces the challenges of the third break only', () => {
   for (const loser of [0, 1, 0, 1] as const) {
     g = toUpgrades(toCardDraft(loseLife(g, loser)), rng);
     if (g.phase.kind !== 'pick') assert.fail();
-    g = pickToken(g, g.phase.tokens[0], rng);
+    g = pickToken(g, g.phase.tokens[0]);
     if (g.phase.kind !== 'pick') assert.fail();
-    g = pickToken(g, g.phase.tokens.find((t) => !(g.phase as { picks: Token[] }).picks.includes(t))!, rng);
+    g = confirmPicks(pickToken(g, g.phase.tokens.find((t) => !(g.phase as { picks: Token[] }).picks.includes(t))!), rng);
     for (let i = 0; i < 2; i++) {
       if (g.phase.kind !== 'play') assert.fail();
       const a = g.phase.activity;
@@ -204,8 +225,7 @@ test('the Limoncello replaces the challenges of the third break only', () => {
 function playBreak2(g: Game, rng: () => number): Game {
   if (g.phase.kind === 'limoncello') return finishLimoncello(limoncelloResult(toLimoncelloEnd(g), 'one'));
   if (g.phase.kind !== 'pick') assert.fail();
-  g = pickToken(g, 'altar', rng);
-  g = pickToken(g, 'deck', rng);
+  g = confirmPicks(pickToken(pickToken(g, 'altar'), 'deck'), rng);
   g = finishEvent(offer(g, 'rare', rng), rng);
   g = finishEvent(trialResult(g, false, rng), rng);
   assert.equal(g.phase.kind, 'round');

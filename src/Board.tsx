@@ -62,7 +62,7 @@ export function BoardCard({ id, col, row, side = row, on }: { id: string; col: n
 }
 
 /** A pile, with some height. */
-function Pile({ x, y, back = 'common', symbol, layers = 5, label, on }: { x: number; y: number; back?: string; symbol?: string; layers?: number; label?: string; on?: boolean }) {
+export function Pile({ x, y, back = 'common', symbol, layers = 5, label, on }: { x: number; y: number; back?: string; symbol?: string; layers?: number; label?: string; on?: boolean }) {
   const src = `url(${iconUrl(`backs/${back}`)})`;
   const { lite } = useLite();
   if (lite) layers = 1;
@@ -143,7 +143,7 @@ function Tokens({ x, y, kind, on, label }: { x: number; y: number; kind: 'bone' 
 
 // ---------- the table ----------
 
-function Mat({ names, labels }: { names: [string, string]; labels: boolean }) {
+export function Mat({ names, labels }: { names: [string, string]; labels: boolean }) {
   const t = useT();
   return (
     <>
@@ -428,9 +428,21 @@ export function LimoncelloBoard({ names }: { names: [string, string] }) {
   return (
     <Scene focus={focus} height={320}>
       <Mat names={['', '']} labels={false} />
-      <div className="ship" style={place(colX(1), ROW_A, 2 * W + 12, H)}>
-        <div className="ship-half left"><span>{t(['Limoncello’s', 'Barco esqueleto'])}</span><b>1</b></div>
-        <div className="ship-half right"><span>{t(['Skeleton Ship', 'El Limoncello'])}</span><b>40</b></div>
+      <div className="ship" style={place(colX(1) + 6, ROW_A, 2 * W, H)}>
+        <div className="ship-half" style={{ backgroundImage: `url(${iconUrl('frames/card_left_empty')})` }}>
+          <img className="ship-art" src={iconUrl('portraits/portrait_limoncello_left_crew')} alt="" />
+          <span className="cf-name">{t(['Limoncello’s', 'El Limoncello'])}</span>
+          <img className="cf-sigil two-0" src={iconUrl('sigils/ability_halfstrike')} alt="" />
+          <img className="cf-sigil two-1" src={iconUrl('sigils/ability_reach')} alt="" />
+          <span className="cf-power">1</span>
+        </div>
+        <div className="ship-half" style={{ backgroundImage: `url(${iconUrl('frames/card_right_empty')})` }}>
+          <img className="ship-art" src={iconUrl('portraits/portrait_limoncello_right_crew')} alt="" />
+          <span className="cf-name">{t(['Skeleton Ship', 'Barco esqueleto'])}</span>
+          <img className="cf-sigil two-0" src={iconUrl('sigils/ability_madeofstone')} alt="" />
+          <img className="cf-sigil two-1" src={iconUrl('sigils/skeleton_mutiny')} alt="" />
+          <span className="cf-health ship-health">40</span>
+        </div>
       </div>
       <BoardCard id="stoat" col={1} row={1} side={1} />
       <BoardCard id="raven" col={3} row={1} side={1} />

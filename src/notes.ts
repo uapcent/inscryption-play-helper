@@ -1,0 +1,75 @@
+/** What the Cards tab says about a card beyond its sigils, and which tutorial explains it. */
+import type { T } from './content';
+
+export interface CardNote { notes?: T[]; tutorial?: string }
+
+const EVOLVES: CardNote = { tutorial: 'evolution' };
+const GROWN: CardNote = { notes: [['It grows from another card, with full health. Never drafted on its own.', 'Crece de otra carta, con toda su vida. Nunca se elige en el reparto.']], tutorial: 'evolution' };
+
+export const CARD_NOTES: Record<string, CardNote> = {
+  ijiraq: { notes: [['Hides face up in your deck. It costs what the card under it costs; its power, health and sigil are its own.', 'Se esconde boca arriba en tu mazo. Cuesta lo mismo que la carta de debajo; su poder, su vida y su sello son suyos.']], tutorial: 'ijiraq' },
+  child_13: { notes: [['Each sacrifice switches it between sleeping and flying; then roll the d20. A 13 makes it the Hungry Child for the round.', 'Cada sacrificio la cambia entre dormida y voladora; después tira el d20. Con un 13 es la Niña hambrienta durante la ronda.']], tutorial: 'child13' },
+  child_13_awake: { notes: [['Child 13’s flying version, in the Upgrades pile. Never drafted on its own.', 'La versión voladora de la Niña 13, en el montón de mejoras. Nunca se elige en el reparto.']], tutorial: 'child13' },
+  hungry_child: { notes: [['What Child 13 becomes on a 13. It stays in its space for the rest of the round: it can’t be killed and doesn’t block damage. Next round you get Child 13 back.', 'En lo que se convierte la Niña 13 con un 13. Se queda en su espacio el resto de la ronda: no se la puede matar y no bloquea el daño. En la siguiente ronda recuperas a la Niña 13.']], tutorial: 'child13' },
+  cat: { notes: [['With Kaycee’s Mod, a d20 after each sacrifice: a 7 makes it the Undead Cat for that round. Without it, optionally, 9 sacrifices.', 'Con Kaycee’s Mod, un d20 tras cada sacrificio: con un 7 es el Gato no muerto durante esa ronda. Sin ella, de forma opcional, 9 sacrificios.']], tutorial: 'cat' },
+  undead_cat: { notes: [['What the Cat becomes, only for that round. Next round you get the Cat back.', 'En lo que se convierte el Gato, solo durante esa ronda. En la siguiente ronda recuperas al Gato.']], tutorial: 'cat' },
+  the_daus: { tutorial: 'daus' },
+  chime__swap_pile: { notes: [['Comes with The Daus. It can’t be sacrificed.', 'Viene con El Daus. No se puede sacrificar.']], tutorial: 'daus' },
+  long_elk: { tutorial: 'longelk' },
+  vertebrae__swap_pile: { notes: [['Left behind by Long Elk. It can be sacrificed.', 'La deja el Uapití largo. Se puede sacrificar.']], tutorial: 'longelk' },
+  cuckoo: { tutorial: 'cuckoo' },
+  broken_egg__swap_pile: { notes: [['Left by the Cuckoo on the adversary’s side.', 'La deja el Cuco en el lado del adversario.']], tutorial: 'cuckoo' },
+  raven_egg__swap_pile: { notes: [['Left by the Cuckoo on a 1 or a 2. It belongs to the adversary, and so does the Raven it grows into.', 'La deja el Cuco con un 1 o un 2. Es del adversario, igual que el Cuervo en el que se convierte.']], tutorial: 'cuckoo' },
+  great_kraken: { tutorial: 'kraken' },
+  mud_turtle: { tutorial: 'turtle' },
+  mud_turtle__swap_pile: { notes: [['The Mud Turtle after losing its shell.', 'La Tortuga de lodo tras perder el caparazón.']], tutorial: 'turtle' },
+  ouroboros: { notes: [['Keep its growth with tokens behind the card.', 'Lleva la cuenta con fichas detrás de la carta.']], tutorial: 'ouroboros' },
+  bell_tentacle: { tutorial: 'tentacles' },
+  hand_tentacle: { tutorial: 'tentacles' },
+  mirror_tentacle: { tutorial: 'tentacles' },
+  bell_tentacle__swap_pile: { tutorial: 'tentacles' },
+  hand_tentacle__swap_pile: { tutorial: 'tentacles' },
+  mirror_tentacle__swap_pile: { tutorial: 'tentacles' },
+  ant_queen: { tutorial: 'ants' },
+  worker_ant: { tutorial: 'ants' },
+  flying_ant: { tutorial: 'ants' },
+  worker_ant__swap_pile: { tutorial: 'ants' },
+  amoeba: { tutorial: 'amoeba' },
+  pelt_lice_new_sigil: { tutorial: 'lice' },
+  fish_hook: { tutorial: 'hook' },
+  skinning_knife: { tutorial: 'knife' },
+  caged_wolf: { tutorial: 'cages' },
+  frozen_opossum: { tutorial: 'cages' },
+  wiseclock: { tutorial: 'wiseclock' },
+  curious_egg: { tutorial: 'hydra' },
+  hydra__upgrade_pile: { notes: [['Hatches from the Curious Egg. Never drafted on its own.', 'Eclosiona del Huevo curioso. Nunca se elige en el reparto.']], tutorial: 'hydra' },
+  raven_egg: EVOLVES,
+  wolf_cub: EVOLVES,
+  elk_fawn: EVOLVES,
+  strange_larva: { notes: [['It grows twice: Strange Larva → Strange Pupa → Mothman.', 'Crece dos veces: Larva extraña → Pupa extraña → Hombre polilla.']], tutorial: 'evolution' },
+  tadpole: EVOLVES,
+  dire_wolf_pup: EVOLVES,
+  strange_pupa__upgrade_pile: GROWN,
+  mothman__upgrade_pile: GROWN,
+  raven__upgrade_pile: GROWN,
+  wolf__upgrade_pile: GROWN,
+  elk__upgrade_pile: GROWN,
+  bullfrog__upgrade_pile: GROWN,
+  dire_wolf__upgrade_pile: GROWN,
+
+  greater_smoke: { notes: [['A player’s first lost life gives them this card. With Kaycee’s Mod they may keep it in hand and play it in a later round.', 'La primera vida que pierde un jugador le da esta carta. Con Kaycee’s Mod puede guardarla en la mano y jugarla en una ronda posterior.']] },
+  smoke: { notes: [['With Kaycee’s Mod, a player’s second lost life gives them this card.', 'Con Kaycee’s Mod, la segunda vida que pierde un jugador le da esta carta.']] },
+  amalgam: { notes: [['Counts as every tribe: for totems, the Trial of Kin and the Curious Egg.', 'Cuenta como todas las tribus: para los tótems, la Prueba de parentesco y el Huevo curioso.']] },
+  red_hart: { notes: [['Its power is the number of cards you’ve sacrificed this round: keep count with tokens.', 'Su poder es el número de cartas que has sacrificado en esta ronda: lleva la cuenta con fichas.']] },
+  leshy: { notes: [['Not played. It can decide who goes first: shuffle it with another card of the same back, and whoever picks Leshy starts.', 'No se juega. Puede decidir quién empieza: barájala con otra carta del mismo dorso, y empieza quien elija a Leshy.']] },
+  sexy_black_goat: { notes: [['Only for the Goat’s Blood boon, which starts the round with it on the board.', 'Solo para la bendición Sangre de cabra, que empieza la ronda con ella en el tablero.']] },
+  pack_mule: { notes: [['The Prospector’s round. It has no owner, doesn’t attack and can’t be sacrificed. Whoever kills it in combat takes its load and wakes the Prospector.', 'La ronda del Buscador de oro. No es de nadie, no ataca y no se puede sacrificar. Quien la mate en combate se lleva su carga y despierta al Buscador de oro.']] },
+  gold_nugget__swap_pile: { notes: [['Left by the Prospector in the space of the card he strikes. Terrain with 2 health that blocks. With 4 on the board, he stops striking.', 'La deja el Buscador de oro en el espacio de la carta que golpea. Terreno con 2 de vida que bloquea. Con 4 en el tablero, deja de golpear.']] },
+  skeleton_crew__swap_pile: { notes: [['The Limoncello’s mutiny: from half health, one joins the players after each ship’s turn.', 'El motín del Limoncello: desde la mitad de su vida, una se une a los jugadores tras cada turno del barco.']] },
+  zombie_parrot__swap_pile: { notes: [['The Limoncello’s mutiny, shuffled with the Skeleton Crew. Facing the ship, its Mighty Leap stops it, and the parrot hits the ship.', 'El motín del Limoncello, barajado con las Tripulaciones esqueleto. Frente al barco, su Salto poderoso lo detiene, y el loro golpea al barco.']] },
+  limoncello_s_left_half: { notes: [['The Limoncello’s bow, played side by side with the stern. It holds the ship’s power.', 'La proa del Limoncello, junto a la popa. Tiene el poder del barco.']] },
+  skeleton_ship_right_half: { notes: [['The Limoncello’s stern, played side by side with the bow. It holds the ship’s health: keep the damage with tokens.', 'La popa del Limoncello, junto a la proa. Tiene la vida del barco: lleva el daño con fichas.']] },
+};
+
+/** The cards worth a tutorial, for the list during a round. */
+export const TRICKY_CARDS = ['ijiraq', 'child_13', 'raven_egg', 'cat', 'the_daus', 'long_elk', 'cuckoo', 'great_kraken', 'mud_turtle', 'ouroboros', 'curious_egg', 'bell_tentacle', 'ant_queen', 'amoeba', 'pelt_lice_new_sigil', 'wiseclock', 'fish_hook', 'skinning_knife', 'caged_wolf'];

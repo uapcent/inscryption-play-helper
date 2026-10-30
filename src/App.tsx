@@ -1,13 +1,14 @@
 import { useEffect, useState } from 'react';
 import { RULES_DATE } from './content';
 import stones from './data/stones.json';
+import { CardSheet } from './CardSheet';
 import { CardsView } from './CardsView';
 import { newGame, setStones, type Game } from './game';
 import {
   CardDraftScreen, CardsScreen, DeathScreen, DraftScreen, FirstScreen, FreshScreen, LimoncelloEndScreen, LimoncelloScreen, OverScreen, PickScreen, PlayScreen, PrepareScreen, RoundScreen, SetupScreen, type Move,
 } from './Screens';
 import { SigilsView } from './Sigils';
-import { LangContext, LiteContext, defaultLite, noteLite, useMedia, type Lang } from './ui';
+import { CardSheetContext, LangContext, LiteContext, defaultLite, noteLite, useMedia, type Lang } from './ui';
 
 setStones(stones);
 
@@ -67,6 +68,7 @@ export function App() {
   const [lang, setLang] = useState<Lang>(loadLang);
   const [tab, setTab] = useState<'game' | 'sigils' | 'cards'>('game');
   const [lite, setLiteState] = useState(loadLite);
+  const [sheet, setSheet] = useState<string | null>(null);
   // On a big screen the sigils stay beside the game.
   const roomy = useMedia('(min-width: 1180px)');
   const sideSigils = roomy && tab === 'game';
@@ -107,6 +109,7 @@ export function App() {
   return (
     <LangContext.Provider value={lang}>
     <LiteContext.Provider value={{ lite, setLite }}>
+    <CardSheetContext.Provider value={setSheet}>
       <header className="top">
         <span className="brand">Inscryption</span>
         <nav className="tabs" aria-label={t('Sections', 'Secciones')}>
@@ -115,7 +118,7 @@ export function App() {
           <button type="button" className={tab === 'cards' ? 'on' : ''} onClick={() => setTab('cards')}>{t('Cards', 'Cartas')}</button>
         </nav>
         <div className="top-tools">
-          {tab === 'game' && undo.length > 0 && <button type="button" onClick={undoMove}>{t('Undo', 'Deshacer')}</button>}
+          {tab === 'game' && undo.length > 0 && <button type="button" aria-label={t('Undo', 'Deshacer')} onClick={undoMove}><span className="undo-word">{t('Undo', 'Deshacer')}</span><span className="undo-icon" aria-hidden="true">↶</span></button>}
           <button type="button" aria-label={t('Cambiar a español', 'Switch to English')} onClick={() => setLang(lang === 1 ? 0 : 1)}>{lang === 1 ? 'EN' : 'ES'}</button>
         </div>
       </header>
@@ -139,6 +142,8 @@ export function App() {
           {' '}{t(`Rules as of ${RULES_DATE}.`, `Reglas a ${RULES_DATE}.`)}
         </p>
       </footer>
+      {sheet && <CardSheet key={sheet} id={sheet} kaycee={game.kaycee} onClose={() => setSheet(null)} />}
+    </CardSheetContext.Provider>
     </LiteContext.Provider>
     </LangContext.Provider>
   );
