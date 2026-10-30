@@ -1,7 +1,8 @@
 # Inscryption Play Helper
 
-A phone-friendly helper for playing the Inscryption board game: it tells each player what to do between rounds,
-reminds you of the rules during a round, and has a searchable list of sigils. English and Spanish.
+A phone-friendly helper for playing the Inscryption board game: it tells you which cards to use, shows the table in
+pseudo-3D, tells each player what to do between rounds, reminds you of the rules during a round, and has a searchable
+list of sigils. English and Spanish. It has a desktop layout, and a light mode without 3D or animations for slow phones.
 
 Choose the expansions (base game, Kaycee's Mod, Pelts) and it walks you through the game: setup, the draft, each round,
 the random events between rounds, the bosses, and the death card at the end. The game is saved in the browser and every
@@ -25,6 +26,9 @@ npm test
 | `src/game.ts` | The flow of a game, as pure functions (`tests/game.test.ts`) |
 | `src/content.ts` | The rules' text, each as `[English, Spanish]`; `RULES_DATE` is shown on the page |
 | `src/Screens.tsx` | One component per step |
+| `src/Board.tsx` | The table in pseudo-3D (CSS transforms only) |
+| `src/CardsView.tsx`, `src/data/cards.json` | Which cards to use, by back (names and copies only) |
+| `tools/make-textures.mjs` | Generates the wood and paper textures |
 | `src/data/sigils.json` | The sigil list |
 | `public/icons/` | Sigil and event icons |
 

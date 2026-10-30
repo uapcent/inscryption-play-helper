@@ -37,6 +37,7 @@ export interface Activity {
 
 export type Phase =
   | { kind: 'setup' }
+  | { kind: 'cards' }
   | { kind: 'prepare' }
   | { kind: 'draft' }
   | { kind: 'first' }
@@ -119,10 +120,11 @@ export function start(g: Game, config: Pick<Game, 'kaycee' | 'pelts' | 'names'>)
     kaycee: config.kaycee,
     pelts: config.kaycee && config.pelts,
     names: config.names,
-    phase: { kind: 'prepare' },
+    phase: { kind: 'cards' },
   };
 }
 
+export const toPrepare = (g: Game): Game => ({ ...g, phase: { kind: 'prepare' } });
 export const toDraft = (g: Game): Game => ({ ...g, phase: { kind: 'draft' } });
 export const toFirst = (g: Game): Game => ({ ...g, phase: { kind: 'first' } });
 /** Round 1: chance decides, as with the Leshy card. */

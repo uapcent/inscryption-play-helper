@@ -1,11 +1,13 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
+import { CardsView } from './CardsView';
+import { BoardTour, ExampleBoard, LimoncelloBoard, ProspectorBoard } from './Board';
 import {
-  ALWAYS, ALWAYS_BASE, ALWAYS_KAYCEE, BOON_TEXT, DEATH_CARD_STEPS, EVENTS, HEAD_NAMES, PREPARE, PREPARE_BASE, PREPARE_KAYCEE, PREPARE_PELTS, TRIALS, TURN_STEPS,
+  ALWAYS, ALWAYS_BASE, ALWAYS_KAYCEE, BOON_TEXT, DEATH_CARD_STEPS, EVENTS, HEAD_ICONS, HEAD_NAMES, TRIALS, TURN_STEPS,
 } from './content';
 import * as G from './game';
 import type { Activity, Carry, Game, Player, Token } from './game';
 import { sigilByKey } from './Sigils';
-import { Card, Choice, D20, Steps, useT } from './ui';
+import { Card, Choice, Coin, D20, Die, Steps, Token as EventToken, motionMs, useLite, useMedia, useSettled, useT } from './ui';
 
 /** Applies a move; the app saves it and keeps it for undo. */
 export type Move = (f: (g: Game) => Game) => void;
@@ -32,6 +34,7 @@ export function SetupScreen({ g, move }: ScreenProps) {
   const [kaycee, setKaycee] = useState(g.kaycee);
   const [pelts, setPelts] = useState(g.pelts);
   const [names, setNames] = useState<[string, string]>(g.names);
+  const { lite, setLite } = useLite();
   return (
     <>
       <h1>{t(['New game', 'Nueva partida'])}</h1>
@@ -54,19 +57,36 @@ export function SetupScreen({ g, move }: ScreenProps) {
           />
         ))}
       </Card>
+      <Card title={t(['Performance', 'Rendimiento'])}>
+        <label className="toggle"><input type="checkbox" checked={lite} onChange={(e) => setLite(e.target.checked)} /><span><b>{t(['Light mode', 'Modo ligero'])}</b><small>{t(['A flat board and no animations, for phones that lag. You can change it at any time at the bottom of the page.', 'Tablero plano y sin animaciones, para móviles que van lentos. Puedes cambiarlo cuando quieras al final de la página.'])}</small></span></label>
+      </Card>
       <Next label={t(['Start', 'Empezar'])} onClick={() => move((s) => G.start(s, { kaycee, pelts, names: [names[0].trim(), names[1].trim()] }))} />
+    </>
+  );
+}
+
+export function CardsScreen({ g, move }: ScreenProps) {
+  const t = useT();
+  return (
+    <>
+      <CardsView kaycee={g.kaycee} pelts={g.pelts} />
+      <Next label={t(['To the table', 'A la mesa'])} onClick={() => move(G.toPrepare)} />
     </>
   );
 }
 
 export function PrepareScreen({ g, move }: ScreenProps) {
   const t = useT();
-  const items = [...PREPARE, ...(g.kaycee ? PREPARE_KAYCEE : PREPARE_BASE), ...(g.pelts ? PREPARE_PELTS : [])];
+  const name = useNames(g);
+  const { lite } = useLite();
   return (
     <>
       <h1>{t(['Setup', 'Preparación'])}</h1>
-      <Card><Steps items={items} /></Card>
-      <Next label={useNextLabel()} onClick={() => move(G.toDraft)} />
+      <p className="note muted">{lite
+        ? t(['Follow the pieces onto the table.', 'Sigue las piezas sobre la mesa.'])
+        : t(['Follow the pieces onto the table. Drag sideways to turn it.', 'Sigue las piezas sobre la mesa. Arrastra de lado para girarla.'])}</p>
+      <BoardTour names={[name(0), name(1)]} kaycee={g.kaycee} pelts={g.pelts} />
+      <Next label={t(['To the draft', 'Al reparto'])} onClick={() => move(G.toDraft)} />
     </>
   );
 }
@@ -100,24 +120,31 @@ export function DraftScreen({ g, move }: ScreenProps) {
 export function FirstScreen({ g, move }: ScreenProps) {
   const t = useT();
   const name = useNames(g);
+  const [flipping, setFlipping] = useState(false);
+  const flip = () => {
+    move((s) => G.drawFirst(s, Math.random));
+    setFlipping(true);
+    setTimeout(() => setFlipping(false), motionMs(1750));
+  };
   return (
     <>
       <h1>{t(['Who goes first?', '¿Quién empieza?'])}</h1>
-      {g.first === null
-        ? <Next label={t(['Choose at random', 'Elegir al azar'])} onClick={() => move((s) => G.drawFirst(s, Math.random))} />
-        : (
-          <>
-            <p className="big">{t([`${name(g.first)} goes first`, `Empieza ${name(g.first)}`])}</p>
-            <Next label={t(['Start round 1', 'Empezar la ronda 1'])} onClick={() => move(G.beginRound)} />
-          </>
-        )}
+      <Coin faces={[name(0), name(1)]} face={g.first} flipping={flipping} />
+      {g.first === null && <Next label={t(['Flip the coin', 'Lanzar la moneda'])} onClick={flip} />}
+      {g.first !== null && !flipping && (
+        <>
+          <p className="big winner">{t([`${name(g.first)} goes first`, `Empieza ${name(g.first)}`])}</p>
+          <Next label={t(['Start round 1', 'Empezar la ronda 1'])} onClick={() => move(G.beginRound)} />
+        </>
+      )}
     </>
   );
 }
 
 // ---------- a round ----------
 
-function Lives({ g }: { g: Game }) {
+/** One candle per life that can be lost; `snuff` plays the candle that just went out. */
+function Lives({ g, snuff }: { g: Game; snuff?: Player }) {
   const name = useNames(g);
   const t = useT();
   const candles = G.livesTotal(g) - 1;
@@ -131,7 +158,11 @@ function Lives({ g }: { g: Game }) {
             role="img"
             aria-label={t([`${G.livesTotal(g) - g.lost[p]} lives left`, `Le quedan ${G.livesTotal(g) - g.lost[p]} vidas`])}
           >
-            {Array.from({ length: candles }, (_, i) => <i key={i} className={i < candles - g.lost[p] ? 'lit' : ''} />)}
+            {Array.from({ length: candles }, (_, i) => {
+              const lit = i < candles - g.lost[p];
+              const justOut = snuff === p && i === candles - g.lost[p];
+              return <span key={i} className={`candle${lit ? '' : ' out'}${justOut ? ' snuffed' : ''}`}><i className="flame" /><b /></span>;
+            })}
           </span>
         </div>
       ))}
@@ -159,6 +190,7 @@ function ProspectorPanel({ g, move }: ScreenProps) {
   if (!g.prospector) {
     return (
       <Card title={t(['The Prospector’s round', 'La ronda del Buscador de oro'])} icon={icon}>
+        <ProspectorBoard names={[name(G.other(g.loser!)), name(g.loser!)]} awake={false} />
         <ul className="steps">
           <li>{t([`Start with the Pack Mule in ${name(g.loser!)}’s leftmost space.`, `Empieza con la Mula de carga en el espacio de más a la izquierda de ${name(g.loser!)}.`])}</li>
           <li>{t(['It has no owner: it doesn’t attack, can’t be sacrificed, and blocks that column for that side.', 'No es de nadie: no ataca, no se puede sacrificar y bloquea esa columna para ese lado.'])}</li>
@@ -179,6 +211,7 @@ function ProspectorPanel({ g, move }: ScreenProps) {
   ][g.prospector.step];
   return (
     <Card title={t(['The Prospector is awake', 'El Buscador de oro está despierto'])} icon={icon} active>
+      <ProspectorBoard names={[name(G.other(g.loser!)), name(g.loser!)]} awake />
       <p className="big">{stepText.title}</p>
       <p>{stepText.text}</p>
       <p className="muted">{t(['With 4 Gold Nuggets on the board, he doesn’t strike.', 'Con 4 Pepitas de oro en el tablero, no golpea.'])}</p>
@@ -192,6 +225,7 @@ export function RoundScreen({ g, move }: ScreenProps) {
   const name = useNames(g);
   const freshDraw = g.kaycee || g.round === 1;
   const always = [...ALWAYS, ...(g.kaycee ? ALWAYS_KAYCEE : ALWAYS_BASE)];
+  const wide = useMedia('(min-width: 900px)');
   return (
     <>
       <h1>{t([`Round ${g.round}`, `Ronda ${g.round}`])} <small>{t([`of up to ${G.maxRounds(g)}`, `de ${G.maxRounds(g)} como máximo`])}</small></h1>
@@ -199,6 +233,7 @@ export function RoundScreen({ g, move }: ScreenProps) {
       {g.first !== null && <p className="big">{t([`${name(g.first)} goes first`, `Empieza ${name(g.first)}`])}</p>}
 
       <h2>{t(['At the start of the round', 'Al empezar la ronda'])}</h2>
+      <div className="two-col">
       {([0, 1] as const).map((p) => {
         const carried = G.carriedNow(g, p);
         return (
@@ -213,18 +248,25 @@ export function RoundScreen({ g, move }: ScreenProps) {
           </Card>
         );
       })}
+      </div>
       {g.kaycee && <p className="muted note">{t(['Ijiraq in a deck: take it out before shuffling; the other player slips it back in, face up, wherever they like.', 'Ijiraq en un mazo: sácalo antes de barajar; el otro jugador lo mete de nuevo, boca arriba, donde quiera.'])}</p>}
 
       {G.isProspectorRound(g) && <ProspectorPanel g={g} move={move} />}
 
       <details className="reminders">
+        <summary>{t(['Show the board', 'Ver el tablero'])}</summary>
+        <ExampleBoard names={[name(0), name(1)]} />
+      </details>
+      <div className="two-col">
+      <details className="reminders" open={wide}>
         <summary>{t(['Reminder: a turn', 'Recordatorio: un turno'])}</summary>
         <ol className="steps">{TURN_STEPS.map((s) => <li key={s.title[0]}><b>{t(s.title)}.</b> {t(s.text)}</li>)}</ol>
       </details>
-      <details className="reminders">
+      <details className="reminders" open={wide}>
         <summary>{t(['Reminder: this round', 'Recordatorio: esta ronda'])}</summary>
         <Steps items={always} />
       </details>
+      </div>
       {g.kaycee && <D20 />}
 
       <h2>{t(['Who lost a life?', '¿Quién ha perdido una vida?'])}</h2>
@@ -236,6 +278,16 @@ export function RoundScreen({ g, move }: ScreenProps) {
   );
 }
 
+/** The room dims for a moment when a life is lost. It leaves once it has played. */
+function Dim() {
+  const [on, setOn] = useState(true);
+  useEffect(() => {
+    const id = setTimeout(() => setOn(false), 1500);
+    return () => clearTimeout(id);
+  }, []);
+  return on ? <div className="dim" /> : null;
+}
+
 /** A life lost, in a base game. */
 export function DeathScreen({ g, move }: ScreenProps) {
   const t = useT();
@@ -243,8 +295,9 @@ export function DeathScreen({ g, move }: ScreenProps) {
   const loser = g.loser!;
   return (
     <>
+      <Dim />
       <h1>{t(['End of the round', 'Fin de la ronda'])}</h1>
-      <Lives g={g} />
+      <Lives g={g} snuff={loser} />
       <Card title={t(['Both players', 'Los dos jugadores'])}>
         <ol className="steps">
           <li>{t(['Keep your hand and all your bones.', 'Conserva tu mano y todos tus huesos.'])}</li>
@@ -297,8 +350,10 @@ export function FreshScreen({ g, move }: ScreenProps) {
   return (
     <>
       <BreakHead g={g} at={0} />
+      <Dim />
       <h1>{t(['A fresh start', 'Cada ronda empieza de cero'])}</h1>
-      <Lives g={g} />
+      <Lives g={g} snuff={loser} />
+      <div className="two-col">
       <Card title={name(loser)} active>
         <ul className="steps">
           <li>{t(['Put out a candle.', 'Apaga una vela.'])}</li>
@@ -317,6 +372,7 @@ export function FreshScreen({ g, move }: ScreenProps) {
           <li>{t(['The scale goes back to 0.', 'La balanza vuelve a 0.'])}</li>
         </ol>
       </Card>
+      </div>
       <Next label={useNextLabel()} onClick={() => move(G.toCardDraft)} />
     </>
   );
@@ -359,14 +415,14 @@ export function PickScreen({ g, move }: ScreenProps) {
         ? t(['These 3 came up at random. They’re safe.', 'Han salido estas 3 al azar. Son seguras.'])
         : t(['These can be lost.', 'Estos se pueden perder.'])}</p>
       <p className="prompt">{t([`${name(chooser)} chooses`, `Elige ${name(chooser)}`])}</p>
-      <div className="choices">
-        {tokens.map((token) => {
+      <div className="choices pick-list">
+        {tokens.map((token, i) => {
           const taken = picks.indexOf(token);
           const e = EVENTS[token];
           return (
             <Choice
               key={token}
-              icon={`nodes/${e.icon}`}
+              token={<EventToken icon={`nodes/${e.icon}`} group={group} i={i} />}
               title={t(e.name)}
               text={t(e.text)}
               disabled={taken >= 0}
@@ -399,13 +455,13 @@ function EventDetails({ token, a, move }: { token: Token; a: Activity; move: Mov
       <>
         <p className="prompt">{t(['Choose a tribe', 'Elige una tribu'])}</p>
         <div className="choices">
-          {a.options!.map((h) => <Choice key={h} title={t(HEAD_NAMES[h])} selected={a.chosen === h} onClick={() => move((s) => G.chooseOption(s, h))} />)}
+          {a.options!.map((h, i) => <Choice key={h} i={i} icon={HEAD_ICONS[h]} title={t(HEAD_NAMES[h])} selected={a.chosen === h} onClick={() => move((s) => G.chooseOption(s, h))} />)}
         </div>
         <p className="prompt">{t(['Choose a sigil', 'Elige un sello'])}</p>
         <div className="choices">
-          {a.stones!.map((k) => {
+          {a.stones!.map((k, i) => {
             const s = sigilByKey(k);
-            return <Choice key={k} icon={s?.icon} title={s ? t(s.name) : k} text={s && t(s.text)} selected={a.stone === k} onClick={() => move((g) => G.chooseStone(g, k))} />;
+            return <Choice key={k} i={i + 3} icon={s?.icon} title={s ? t(s.name) : k} text={s && t(s.text)} selected={a.stone === k} onClick={() => move((g) => G.chooseStone(g, k))} />;
           })}
         </div>
       </>
@@ -431,7 +487,7 @@ function EventDetails({ token, a, move }: { token: Token; a: Activity; move: Mov
           <>
             <p className="prompt">{t(['Passed! Choose a boon for the next round', '¡Superada! Elige una bendición para la siguiente ronda'])}</p>
             <div className="choices">
-              {a.options!.map((b) => <Choice key={b} title={t(BOON_TEXT[b].name)} text={t(BOON_TEXT[b].text)} selected={a.boon === b} onClick={() => move((s) => G.chooseBoon(s, b))} />)}
+              {a.options!.map((b, i) => <Choice key={b} i={i} icon={`trials/${BOON_TEXT[b].icon}`} title={t(BOON_TEXT[b].name)} text={t(BOON_TEXT[b].text)} selected={a.boon === b} onClick={() => move((s) => G.chooseBoon(s, b))} />)}
             </div>
           </>
         )}
@@ -450,17 +506,24 @@ function EventDetails({ token, a, move }: { token: Token; a: Activity; move: Mov
         </>
       );
     }
-    const boon = G.altarBoon(a);
-    return (
-      <>
-        {a.roll !== undefined && <p className="big">d20: {a.roll}</p>}
-        {boon
-          ? <p className="result ok-text"><b>{t(BOON_TEXT[boon].name)}.</b> {t(BOON_TEXT[boon].text)} {t(['The helper will remind you.', 'La ayuda te lo recordará.'])}</p>
-          : <p className="result">{t(['He scorns it: you get nothing.', 'La desprecia: no recibes nada.'])}</p>}
-      </>
-    );
+    return <AltarResult a={a} />;
   }
   return null;
+}
+
+/** The altar's answer, once the die has landed. */
+function AltarResult({ a }: { a: Activity }) {
+  const t = useT();
+  const landed = useSettled(a.roll === undefined ? 0 : 1050);
+  const boon = G.altarBoon(a);
+  return (
+    <>
+      {a.roll !== undefined && <div className="die-big"><Die value={a.roll} rollKey="altar" /></div>}
+      {landed && (boon
+        ? <p className="result ok-text"><b>{t(BOON_TEXT[boon].name)}.</b> {t(BOON_TEXT[boon].text)} {t(['The helper will remind you.', 'La ayuda te lo recordará.'])}</p>
+        : <p className="result">{t(['He scorns it: you get nothing.', 'La desprecia: no recibes nada.'])}</p>)}
+    </>
+  );
 }
 
 function TrialChoice({ a, move }: { a: Activity; move: Move }) {
@@ -469,7 +532,7 @@ function TrialChoice({ a, move }: { a: Activity; move: Move }) {
     <>
       <p className="prompt">{t(['Choose a trial', 'Elige una prueba'])}</p>
       <div className="choices">
-        {a.options!.map((id) => <Choice key={id} title={t(TRIALS[id].name)} text={t(TRIALS[id].text)} selected={a.chosen === id} onClick={() => move((s) => G.chooseOption(s, id))} />)}
+        {a.options!.map((id, i) => <Choice key={id} i={i} icon={`trials/${TRIALS[id].icon}`} title={t(TRIALS[id].name)} text={t(TRIALS[id].text)} selected={a.chosen === id} onClick={() => move((s) => G.chooseOption(s, id))} />)}
       </div>
     </>
   );
@@ -507,6 +570,8 @@ export function LimoncelloScreen({ g, move }: ScreenProps) {
       <BreakHead g={g} at={3} />
       <h1>{t(['The Limoncello', 'El Limoncello'])}</h1>
       <p className="lead">{t(['A boss fight you play together. It costs no lives.', 'Un combate contra un jefe que jugáis juntos. No cuesta vidas.'])}</p>
+      <LimoncelloBoard names={[name(a), name(b)]} />
+      <div className="two-col">
       <Card title={t(['Setup', 'Preparación'])} icon="nodes/bossnode_royal">
         <ul className="steps">
           <li>{t(['The ship is two cards side by side, in the middle of one row. You share the other row.', 'El barco son dos cartas juntas, en el centro de una fila. Compartís la otra fila.'])}</li>
@@ -521,6 +586,7 @@ export function LimoncelloScreen({ g, move }: ScreenProps) {
           <li>{t(['The ship fires its Broadside at the 2 spaces across and sails one space, turning around at the edge.', 'El barco dispara su Andanada a los 2 espacios de enfrente y navega un espacio, dando la vuelta en el borde.'])}</li>
         </ol>
       </Card>
+      </div>
       <Card title={t(['Reminders', 'Recordatorios'])}>
         <ul className="steps">
           <li>{t(['Play in any space of your row, but a hit on an empty space goes to that column’s player.', 'Juega en cualquier espacio de vuestra fila, pero un golpe a un espacio vacío va al jugador de esa columna.'])}</li>

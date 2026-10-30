@@ -1,17 +1,19 @@
 import { useEffect, useState } from 'react';
 import { RULES_DATE } from './content';
 import stones from './data/stones.json';
+import { CardsView } from './CardsView';
 import { newGame, setStones, type Game } from './game';
 import {
-  CardDraftScreen, DeathScreen, DraftScreen, FirstScreen, FreshScreen, LimoncelloEndScreen, LimoncelloScreen, OverScreen, PickScreen, PlayScreen, PrepareScreen, RoundScreen, SetupScreen, type Move,
+  CardDraftScreen, CardsScreen, DeathScreen, DraftScreen, FirstScreen, FreshScreen, LimoncelloEndScreen, LimoncelloScreen, OverScreen, PickScreen, PlayScreen, PrepareScreen, RoundScreen, SetupScreen, type Move,
 } from './Screens';
 import { SigilsView } from './Sigils';
-import { LangContext, type Lang } from './ui';
+import { LangContext, LiteContext, defaultLite, noteLite, useMedia, type Lang } from './ui';
 
 setStones(stones);
 
 const SAVE_KEY = 'inscryption-helper:game';
 const LANG_KEY = 'inscryption-helper:lang';
+const LITE_KEY = 'inscryption-helper:lite';
 const UNDO_LIMIT = 50;
 
 interface Saved { game: Game; undo: Game[] }
@@ -32,10 +34,19 @@ function loadLang(): Lang {
   return navigator.language.toLowerCase().startsWith('es') ? 1 : 0;
 }
 
+function loadLite() {
+  try {
+    const saved = localStorage.getItem(LITE_KEY);
+    if (saved === '0' || saved === '1') return saved === '1';
+  } catch { /* no storage */ }
+  return defaultLite();
+}
+
 function GameView({ game, move, onNew }: { game: Game; move: Move; onNew: () => void }) {
   const props = { g: game, move };
   switch (game.phase.kind) {
     case 'setup': return <SetupScreen {...props} />;
+    case 'cards': return <CardsScreen {...props} />;
     case 'prepare': return <PrepareScreen {...props} />;
     case 'draft': return <DraftScreen {...props} />;
     case 'first': return <FirstScreen {...props} />;
@@ -54,7 +65,16 @@ function GameView({ game, move, onNew }: { game: Game; move: Move; onNew: () => 
 export function App() {
   const [{ game, undo }, setSaved] = useState<Saved>(load);
   const [lang, setLang] = useState<Lang>(loadLang);
-  const [tab, setTab] = useState<'game' | 'sigils'>('game');
+  const [tab, setTab] = useState<'game' | 'sigils' | 'cards'>('game');
+  const [lite, setLiteState] = useState(loadLite);
+  // On a big screen the sigils stay beside the game.
+  const roomy = useMedia('(min-width: 1180px)');
+  const sideSigils = roomy && tab === 'game';
+  noteLite(lite);
+  const setLite = (on: boolean) => {
+    setLiteState(on);
+    try { localStorage.setItem(LITE_KEY, on ? '1' : '0'); } catch { /* it lasts until the page closes */ }
+  };
   const t = (en: string, es: string) => (lang === 1 ? es : en);
 
   useEffect(() => {
@@ -69,6 +89,9 @@ export function App() {
   useEffect(() => {
     window.scrollTo(0, 0);
   }, [stepKey, tab]);
+  useEffect(() => {
+    document.documentElement.classList.toggle('lite', lite);
+  }, [lite]);
 
   const move: Move = (f) => setSaved((s) => {
     const next = f(s.game);
@@ -83,20 +106,31 @@ export function App() {
 
   return (
     <LangContext.Provider value={lang}>
+    <LiteContext.Provider value={{ lite, setLite }}>
       <header className="top">
+        <span className="brand">Inscryption</span>
         <nav className="tabs" aria-label={t('Sections', 'Secciones')}>
           <button type="button" className={tab === 'game' ? 'on' : ''} onClick={() => setTab('game')}>{t('Game', 'Partida')}</button>
           <button type="button" className={tab === 'sigils' ? 'on' : ''} onClick={() => setTab('sigils')}>{t('Sigils', 'Sellos')}</button>
+          <button type="button" className={tab === 'cards' ? 'on' : ''} onClick={() => setTab('cards')}>{t('Cards', 'Cartas')}</button>
         </nav>
         <div className="top-tools">
           {tab === 'game' && undo.length > 0 && <button type="button" onClick={undoMove}>{t('Undo', 'Deshacer')}</button>}
           <button type="button" aria-label={t('Cambiar a español', 'Switch to English')} onClick={() => setLang(lang === 1 ? 0 : 1)}>{lang === 1 ? 'EN' : 'ES'}</button>
         </div>
       </header>
-      <main>
-        {tab === 'game' ? <GameView game={game} move={move} onNew={reset} /> : <SigilsView kaycee={game.kaycee} pelts={game.pelts} />}
+      <div className={`layout${sideSigils ? ' with-side' : ''}`}>
+      <main className={`tab-${tab}`}>
+        <div className="screen" key={tab === 'game' ? stepKey : tab}>
+          {tab === 'game' && <GameView game={game} move={move} onNew={reset} />}
+          {tab === 'sigils' && <SigilsView kaycee={game.kaycee} pelts={game.pelts} />}
+          {tab === 'cards' && <CardsView kaycee={game.kaycee} pelts={game.pelts} />}
+        </div>
       </main>
+      {sideSigils && <aside className="side-sigils" aria-label={t('Sigils', 'Sellos')}><SigilsView kaycee={game.kaycee} pelts={game.pelts} /></aside>}
+      </div>
       <footer>
+        <button type="button" className="link" onClick={() => setLite(!lite)}>{lite ? t('Light mode: on. Turn off', 'Modo ligero: activado. Desactivar') : t('Light mode: off. Turn on', 'Modo ligero: desactivado. Activar')}</button>
         {inGame && tab === 'game' && game.phase.kind !== 'over' && <button type="button" className="link" onClick={confirmNew}>{t('Abandon this game', 'Abandonar esta partida')}</button>}
         <p>
           {t('Unofficial fan-made helper. Rules modified from ', 'Ayuda no oficial hecha por un fan. Reglas modificadas a partir de las de ')}
@@ -105,6 +139,7 @@ export function App() {
           {' '}{t(`Rules as of ${RULES_DATE}.`, `Reglas a ${RULES_DATE}.`)}
         </p>
       </footer>
+    </LiteContext.Provider>
     </LangContext.Provider>
   );
 }

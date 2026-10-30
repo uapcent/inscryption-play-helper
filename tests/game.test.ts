@@ -2,7 +2,7 @@ import assert from 'node:assert/strict';
 import { test } from 'node:test';
 import {
   BOONS, DECK_TRIALS, altarBoon, canFinish, carriedNow, chooseBoon, chooseOption, chooseStone, drawFirst, drawSome, finishDeath, finishEvent, finishLimoncello,
-  leshyTrials, limoncelloResult, loseLife, newGame, offer, pickToken, prospectorTurn, setStones, smokeFor, start, toCardDraft, toLimoncelloEnd, toUpgrades,
+  leshyTrials, limoncelloResult, loseLife, newGame, offer, pickToken, prospectorTurn, setStones, smokeFor, start, toCardDraft, toLimoncelloEnd, toPrepare, toUpgrades,
   trialResult, upgradeTokens, wakeProspector, type Game, type Token,
 } from '../src/game.ts';
 
@@ -42,6 +42,11 @@ function playBreak(g: Game, rng: () => number): Game {
   assert.equal(g.phase.kind, 'round');
   return g;
 }
+
+test('a new game first shows the cards, then the setup', () => {
+  assert.equal(kaycee().phase.kind, 'cards');
+  assert.equal(toPrepare(kaycee()).phase.kind, 'prepare');
+});
 
 test('a base game is 2 lives: two losses by one player end it', () => {
   let g = base();

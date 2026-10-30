@@ -48,28 +48,28 @@ export const EVENTS: Record<Token, { icon: string; name: T; text: T }> = {
   },
 };
 
-export const TRIALS: Record<string, { name: T; text: T }> = {
-  ring: { name: ['Ring', 'Anillo'], text: ['Ringworm or Ouroboros among the 3 cards, or a card with a 0 or an 8 in its power or health.', 'Gusanillo u Ouroboros entre las 3 cartas, o una carta con un 0 o un 8 en su poder o su vida.'] },
-  rarity: { name: ['Rarity', 'Rareza'], text: ['A rare card among the 3.', 'Una carta rara entre las 3.'] },
-  skins: { name: ['Skins', 'Pieles'], text: ['A pelt among the 3.', 'Una piel entre las 3.'] },
-  winged: { name: ['the Winged', 'los Alados'], text: ['A card with Airborne among the 3.', 'Una carta con Aéreo entre las 3.'] },
-  finned: { name: ['the Finned', 'las Aletas'], text: ['A card with Waterborne among the 3.', 'Una carta con Acuático entre las 3.'] },
-  young: { name: ['the Young', 'los Polluelos'], text: ['A card with Fledgling among the 3.', 'Una carta con Polluelo entre las 3.'] },
-  blood: { name: ['Blood', 'Sangre'], text: ['The 3 cost at least 4 blood together.', 'Las 3 cuestan al menos 4 de sangre entre todas.'] },
-  bones: { name: ['Bones', 'Huesos'], text: ['The 3 cost at least 4 bones together.', 'Las 3 cuestan al menos 4 huesos entre todas.'] },
-  strength: { name: ['Strength', 'Fuerza'], text: ['At least 4 power together (pelts and tentacles count 0; Ant Damage counts the ants).', 'Al menos 4 de poder entre todas (las pieles y los tentáculos cuentan 0; Daño de hormigas cuenta las hormigas).'] },
-  life: { name: ['Life', 'Vida'], text: ['At least 6 health together.', 'Al menos 6 de vida entre todas.'] },
-  sigils: { name: ['Sigils', 'Sellos'], text: ['At least 3 sigils together (totem sigils don’t count).', 'Al menos 3 sellos entre todas (los sellos de tótem no cuentan).'] },
-  kin: { name: ['Kin', 'Parentesco'], text: ['2 of the 3 share a tribe, or are the same card.', '2 de las 3 son de la misma tribu, o son la misma carta.'] },
+export const TRIALS: Record<string, { icon: string; name: T; text: T }> = {
+  ring: { icon: 'trial_ring', name: ['Ring', 'Anillo'], text: ['Ringworm or Ouroboros among the 3 cards, or a card with a 0 or an 8 in its power or health.', 'Gusanillo u Ouroboros entre las 3 cartas, o una carta con un 0 o un 8 en su poder o su vida.'] },
+  rarity: { icon: 'trial_rare', name: ['Rarity', 'Rareza'], text: ['A rare card among the 3.', 'Una carta rara entre las 3.'] },
+  skins: { icon: 'trial_pelts', name: ['Skins', 'Pieles'], text: ['A pelt among the 3.', 'Una piel entre las 3.'] },
+  winged: { icon: 'trial_flying', name: ['the Winged', 'los Alados'], text: ['A card with Airborne among the 3.', 'Una carta con Aéreo entre las 3.'] },
+  finned: { icon: 'trial_submerge', name: ['the Finned', 'las Aletas'], text: ['A card with Waterborne among the 3.', 'Una carta con Acuático entre las 3.'] },
+  young: { icon: 'trial_young', name: ['the Young', 'los Polluelos'], text: ['A card with Fledgling among the 3.', 'Una carta con Polluelo entre las 3.'] },
+  blood: { icon: 'trial_blood', name: ['Blood', 'Sangre'], text: ['The 3 cost at least 4 blood together.', 'Las 3 cuestan al menos 4 de sangre entre todas.'] },
+  bones: { icon: 'trial_bones', name: ['Bones', 'Huesos'], text: ['The 3 cost at least 4 bones together.', 'Las 3 cuestan al menos 4 huesos entre todas.'] },
+  strength: { icon: 'trial_power', name: ['Strength', 'Fuerza'], text: ['At least 4 power together (pelts and tentacles count 0; Ant Damage counts the ants).', 'Al menos 4 de poder entre todas (las pieles y los tentáculos cuentan 0; Daño de hormigas cuenta las hormigas).'] },
+  life: { icon: 'trial_toughness', name: ['Life', 'Vida'], text: ['At least 6 health together.', 'Al menos 6 de vida entre todas.'] },
+  sigils: { icon: 'trial_abilities', name: ['Sigils', 'Sellos'], text: ['At least 3 sigils together (totem sigils don’t count).', 'Al menos 3 sellos entre todas (los sellos de tótem no cuentan).'] },
+  kin: { icon: 'trial_tribes', name: ['Kin', 'Parentesco'], text: ['2 of the 3 share a tribe, or are the same card.', '2 de las 3 son de la misma tribu, o son la misma carta.'] },
 };
 
-export const BOON_TEXT: Record<string, { name: T; text: T }> = {
-  ambidextrous: { name: ['Ambidextrous', 'Ambidiestro'], text: ['You may draw twice at the start of each of your turns, for the whole round.', 'Puedes robar dos veces al principio de cada uno de tus turnos, durante toda la ronda.'] },
-  goat: { name: ['Goat’s Blood', 'Sangre de cabra'], text: ['Start the round with the Sexy Black Goat on the board.', 'Empiezas la ronda con la Cabra negra sexy en el tablero.'] },
-  forest: { name: ['Forest', 'Bosque'], text: ['Start the round with a fir on each of your spaces (Grand or Snowy Fir, from the swaps pile).', 'Empiezas la ronda con un abeto en cada uno de tus espacios (Abeto gigante o Abeto nevado, del montón de intercambios).'] },
-  magpie: { name: ['Magpie’s Eye', 'Ojo de urraca'], text: ['Choose the 3 cards you draw at the start of the round from your deck, instead of drawing them at random.', 'Elige de tu mazo las 3 cartas que robas al empezar la ronda, en vez de robarlas al azar.'] },
-  bone_lord: { name: ['Bone Lord', 'Señor de los huesos'], text: ['Start the round with 8 bones.', 'Empiezas la ronda con 8 huesos.'] },
-  lesser_bone_lord: { name: ['Lesser Bone Lord', 'Señor de los huesos menor'], text: ['Start the round with 4 bones.', 'Empiezas la ronda con 4 huesos.'] },
+export const BOON_TEXT: Record<string, { icon: string; name: T; text: T }> = {
+  ambidextrous: { icon: 'boonicon_doubledraw', name: ['Ambidextrous', 'Ambidiestro'], text: ['You may draw twice at the start of each of your turns, for the whole round.', 'Puedes robar dos veces al principio de cada uno de tus turnos, durante toda la ronda.'] },
+  goat: { icon: 'boonicon_startinggoat', name: ['Goat’s Blood', 'Sangre de cabra'], text: ['Start the round with the Sexy Black Goat on the board.', 'Empiezas la ronda con la Cabra negra sexy en el tablero.'] },
+  forest: { icon: 'boonicon_startingtrees', name: ['Forest', 'Bosque'], text: ['Start the round with a fir on each of your spaces (Grand or Snowy Fir, from the swaps pile).', 'Empiezas la ronda con un abeto en cada uno de tus espacios (Abeto gigante o Abeto nevado, del montón de intercambios).'] },
+  magpie: { icon: 'boonicon_tutordraw', name: ['Magpie’s Eye', 'Ojo de urraca'], text: ['Choose the 3 cards you draw at the start of the round from your deck, instead of drawing them at random.', 'Elige de tu mazo las 3 cartas que robas al empezar la ronda, en vez de robarlas al azar.'] },
+  bone_lord: { icon: 'boonicon_startingbones', name: ['Bone Lord', 'Señor de los huesos'], text: ['Start the round with 8 bones.', 'Empiezas la ronda con 8 huesos.'] },
+  lesser_bone_lord: { icon: 'boonicon_singlestartingbone', name: ['Lesser Bone Lord', 'Señor de los huesos menor'], text: ['Start the round with 4 bones.', 'Empiezas la ronda con 4 huesos.'] },
 };
 
 export const HEAD_NAMES: Record<string, T> = {
@@ -79,6 +79,15 @@ export const HEAD_NAMES: Record<string, T> = {
   reptiles: ['Reptiles', 'Reptiles'],
   squirrels: ['Squirrels', 'Ardillas'],
   wolves: ['Canines', 'Cánidos'],
+};
+
+export const HEAD_ICONS: Record<string, string> = {
+  birds: 'tribes/tribeicon_bird',
+  bugs: 'tribes/tribeicon_insect',
+  deer: 'tribes/tribeicon_hooved',
+  reptiles: 'tribes/tribeicon_reptile',
+  squirrels: 'portraits/portrait_squirrel',
+  wolves: 'tribes/tribeicon_canine',
 };
 
 export const TURN_STEPS: { title: T; text: T }[] = [
@@ -105,22 +114,31 @@ export const ALWAYS_KAYCEE: T[] = [
   ['Cat and Child 13: roll the d20 after each sacrifice (Cat: a 7 makes it the Undead Cat; Child 13: a 13 makes it the Hungry Child).', 'Gato y Niña 13: tira el d20 tras cada sacrificio (Gato: con un 7 es el Gato no muerto; Niña 13: con un 13 es la Niña hambrienta).'],
 ];
 
-export const PREPARE: T[] = [
-  ['Deal each player 10 Squirrels in their squirrel space.', 'Reparte a cada jugador 10 Ardillas en su espacio de ardillas.'],
-  ['Put the Item, Swap, Upgrade and Smoke cards in their shared spots on the board.', 'Pon las cartas de objeto, intercambio, mejora y Humo en sus sitios compartidos del tablero.'],
-  ['Scale on the left with the tooth on zero, and the bell where both players can reach it.', 'La balanza a la izquierda con el diente en el cero, y la campana donde los dos lleguéis.'],
-  ['Bone and heart tokens within reach, and a sigil guide for each player.', 'Las fichas de hueso y de corazón a mano, y una guía de sellos para cada jugador.'],
-];
-export const PREPARE_BASE: T[] = [
-  ['One lit candle for each player.', 'Una vela encendida por jugador.'],
-  ['Leave the Kaycee’s Mod cards in the box (K back, totems, trials, boons, the Pack Mule, its items and the ship).', 'Deja en la caja las cartas de Kaycee’s Mod (dorso K, tótems, pruebas, bendiciones, la Mula, sus objetos y el barco).'],
-];
-export const PREPARE_KAYCEE: T[] = [
-  ['Two lit candles for each player, and the d20.', 'Dos velas encendidas por jugador, y el d20.'],
-  ['Keep near the board: totems, trials, boons, the patches and the Pack Mule.', 'Ten cerca del tablero: tótems, pruebas, bendiciones, los parches y la Mula de carga.'],
-];
-export const PREPARE_PELTS: T[] = [
-  ['Pelts in their own pile. Each player will shuffle a Rabbit Pelt into their deck after the draft.', 'Las pieles en su propio montón. Cada jugador barajará una Piel de conejo en su mazo después del reparto.'],
+/** The groups of the Cards list, in order. `sharedBack`: its back doesn't tell it apart from cards of another set. */
+export const CARD_GROUPS: { id: string; title: T; where: T; sharedBack?: boolean }[] = [
+  { id: 'base:squirrels', title: ['Squirrels', 'Ardillas'], where: ['10 for each player; the rest stay spare.', '10 para cada jugador; el resto queda de reserva.'] },
+  { id: 'base:creatures', title: ['Creatures and rares', 'Criaturas y raras'], where: ['Shuffled into the draw pile.', 'Barajadas en el mazo de robo.'] },
+  { id: 'base:items', title: ['Items', 'Objetos'], where: ['The item pile.', 'El montón de objetos.'] },
+  { id: 'base:upgrades', title: ['Upgrades', 'Mejoras'], where: ['Keep the whole pile, whatever you play with.', 'Deja el montón entero, juguéis con lo que juguéis.'] },
+  { id: 'base:swaps', title: ['Swap cards', 'Cartas de intercambio'], where: ['Keep the whole pile, whatever you play with.', 'Deja el montón entero, juguéis con lo que juguéis.'] },
+  { id: 'base:smoke', title: ['Greater Smoke', 'Humo superior'], where: ['The Smoke pile.', 'El montón de Humo.'] },
+  { id: 'base:death', title: ['Death cards', 'Cartas de muerte'], where: ['Add two or so to the draw pile; keep the blank ones apart.', 'Añade unas dos al mazo de robo; guarda aparte las que están en blanco.'] },
+  { id: 'base:special', title: ['Leshy and the Undead Cat', 'Leshy y el Gato no muerto'], where: ['Near the board, out of the draw pile.', 'Cerca del tablero, fuera del mazo de robo.'] },
+  { id: 'kaycee:creatures', title: ['Kaycee’s creatures', 'Criaturas de Kaycee'], where: ['Shuffled into the draw pile.', 'Barajadas en el mazo de robo.'] },
+  { id: 'kaycee:items', title: ['Kaycee’s items', 'Objetos de Kaycee'], where: ['Same back as the items: in the item pile.', 'Mismo dorso que los objetos: en el montón de objetos.'], sharedBack: true },
+  { id: 'kaycee:smoke', title: ['Smoke', 'Humo'], where: ['Same back as the Greater Smoke: in the Smoke pile.', 'Mismo dorso que el Humo superior: en el montón de Humo.'], sharedBack: true },
+  { id: 'kaycee:aquasquirrels', title: ['Aquasquirrels', 'Acuardillas'], where: ['Near the board, for a failed Leshy’s trial.', 'Cerca del tablero, por si se falla una prueba de Leshy.'] },
+  { id: 'kaycee:special', title: ['Sexy Black Goat and Hungry Child', 'Cabra negra sexy y Niña hambrienta'], where: ['Same back as the creatures: near the board, out of the draw pile.', 'Mismo dorso que las criaturas: cerca del tablero, fuera del mazo de robo.'], sharedBack: true },
+  { id: 'kaycee:heads', title: ['Tribe heads', 'Cabezas de tribu'], where: ['Near the board, for Build a totem.', 'Cerca del tablero, para Construir un tótem.'] },
+  { id: 'kaycee:stones', title: ['Sigil stones', 'Piedras de sello'], where: ['Near the board, for Build a totem.', 'Cerca del tablero, para Construir un tótem.'] },
+  { id: 'kaycee:trials', title: ['Trials', 'Pruebas'], where: ['Near the board, split into Leshy’s and Deck trials.', 'Cerca del tablero, separadas en pruebas de Leshy y de mazo.'] },
+  { id: 'kaycee:boons', title: ['Boons', 'Bendiciones'], where: ['Same back as the trials: keep them in their own stack.', 'Mismo dorso que las pruebas: en su propio montón.'] },
+  { id: 'kaycee:mule', title: ['Pack Mule', 'Mula de carga'], where: ['Near the board, for round 2.', 'Cerca del tablero, para la ronda 2.'] },
+  { id: 'kaycee:boss', title: ['The Limoncello', 'El Limoncello'], where: ['Near the board, for the third break.', 'Cerca del tablero, para el tercer descanso.'] },
+  { id: 'pelts:pelts', title: ['Pelts', 'Pieles'], where: ['The pelt pile.', 'El montón de pieles.'] },
+  { id: 'pelts:creatures', title: ['Pelt Lice', 'Piojos de piel'], where: ['K back: shuffled into the draw pile.', 'Dorso K: barajados en el mazo de robo.'], sharedBack: true },
+  { id: 'pelts:items', title: ['Skinning Knife', 'Cuchillo de desollar'], where: ['Same back as the items: in the item pile.', 'Mismo dorso que los objetos: en el montón de objetos.'], sharedBack: true },
+  { id: 'pelts:trials', title: ['Trial of Skins', 'Prueba de pieles'], where: ['Same back as the trials: with Leshy’s trials.', 'Mismo dorso que las pruebas: con las de Leshy.'], sharedBack: true },
 ];
 
 export const DEATH_CARD_STEPS: T[] = [
