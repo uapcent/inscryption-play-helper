@@ -63,7 +63,10 @@ h2 { font-size: 1.1rem; margin-top: 8px; color: var(--accent); text-shadow: 0 1p
 a { color: var(--accent); }
 
 button, input { font: inherit; color: inherit; }
-button {
+button, .button-like {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
   min-height: 46px;
   padding: 8px 14px;
   color: var(--text);
@@ -75,7 +78,8 @@ button {
   cursor: pointer;
   transition: transform 0.12s, border-color 0.12s, box-shadow 0.12s;
 }
-button:hover:not(:disabled) { border-color: var(--accent); }
+button:hover:not(:disabled), .button-like:hover { border-color: var(--accent); }
+.button-like:focus-within { outline: 2px solid var(--accent); outline-offset: 2px; }
 button:active:not(:disabled) { transform: translateY(2px); box-shadow: 0 0 0 #000; }
 button:disabled { opacity: 0.5; cursor: default; }
 :focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
@@ -680,3 +684,20 @@ footer button.link + button.link { margin-left: 18px; }
 @media (min-width: 900px) {
   .scale-bar { top: 66px; max-width: 620px; }
 }
+
+/* ---------- music ---------- */
+.top .music-on { color: var(--ink); background: var(--accent); border-color: #000; }
+.sheet-title { margin: 0; padding-right: 48px; font-size: 1.45rem; color: var(--paper); }
+.music-controls { display: flex; flex-wrap: wrap; align-items: center; gap: 10px 16px; }
+.music-volume { display: flex; align-items: center; gap: 10px; flex: 1; min-width: 200px; }
+.music-volume input { flex: 1; accent-color: var(--accent); }
+.music-slots { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 8px; }
+.music-slots li { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 8px 12px; padding: 10px 12px; background: rgb(8 4 2 / 0.72); border: 1px solid var(--line); border-radius: var(--radius); }
+.music-slot-text { display: flex; flex-direction: column; min-width: 0; flex: 1 1 220px; }
+.music-slot-text b { font-family: var(--heading); font-weight: 400; color: var(--paper); }
+.music-slot-text small { color: var(--muted); }
+.music-slot-text em { font-size: 0.9rem; }
+.music-file { color: var(--accent); }
+.music-slot-tools { display: flex; gap: 8px; }
+.music-slot-tools .button-like { position: relative; overflow: hidden; }
+.music-slot-tools input[type=file] { position: absolute; inset: 0; opacity: 0; cursor: pointer; }

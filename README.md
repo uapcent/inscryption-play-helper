@@ -9,6 +9,9 @@ the random events between rounds, the bosses, and the death card at the end. The
 step can be undone. During a round it keeps the scale on screen: tap to move the gold tooth as damage lands, and it
 tells you when someone draws an item or loses a life. You still need the cards: the helper doesn't track the board.
 
+Music is optional and comes from the players' own files (the ♪ button): one for the cabin, battles, the Prospector, the
+Limoncello and the end. They stay in the browser (IndexedDB) and are never uploaded; the site ships no music.
+
 Unofficial and fan-made. The rules are a modified version of [CrypticCrafter's](https://www.crypticcrafter.com), with
 house rules for Kaycee's Mod. Inscryption and its art belong to Daniel Mullins Games.
 
@@ -31,6 +34,7 @@ npm test
 | `src/CardsView.tsx`, `src/data/cards.json` | Which cards to use, by back (names and copies only) |
 | `tools/make-textures.mjs` | Generates the wood and paper textures |
 | `src/data/sigils.json` | The sigil list |
+| `src/music.ts`, `src/MusicSheet.tsx` | Which music each step plays, the player, and choosing the files (`tests/music.test.ts`) |
 | `public/icons/` | Sigil and event icons |
 
 Pushing to `main` deploys to GitHub Pages (`.github/workflows/deploy.yml`; set Pages' source to GitHub Actions).

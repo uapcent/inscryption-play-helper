@@ -7,6 +7,8 @@ import { newGame, setStones, type Game } from './game';
 import {
   CardDraftScreen, CardsScreen, DeathScreen, DraftScreen, FirstScreen, FreshScreen, LimoncelloEndScreen, LimoncelloScreen, OverScreen, PickScreen, PlayScreen, PrepareScreen, RoundScreen, SetupScreen, type Move,
 } from './Screens';
+import { MusicSheet } from './MusicSheet';
+import { loadTracks, music, slotFor, type Slot, type Track } from './music';
 import { SigilsView } from './Sigils';
 import { CardSheetContext, LangContext, LiteContext, defaultLite, noteLite, useMedia, type Lang } from './ui';
 
@@ -15,6 +17,8 @@ setStones(stones);
 const SAVE_KEY = 'inscryption-helper:game';
 const LANG_KEY = 'inscryption-helper:lang';
 const LITE_KEY = 'inscryption-helper:lite';
+const MUSIC_KEY = 'inscryption-helper:music';
+const VOLUME_KEY = 'inscryption-helper:volume';
 const UNDO_LIMIT = 50;
 
 interface Saved { game: Game; undo: Game[] }
@@ -42,6 +46,13 @@ function loadLite() {
   } catch { /* no storage */ }
   return defaultLite();
 }
+
+const loadSetting = (key: string) => {
+  try { return localStorage.getItem(key); } catch { return null; }
+};
+const saveSetting = (key: string, value: string) => {
+  try { localStorage.setItem(key, value); } catch { /* it lasts until the page closes */ }
+};
 
 function GameView({ game, move, onNew }: { game: Game; move: Move; onNew: () => void }) {
   const props = { g: game, move };
@@ -78,6 +89,39 @@ export function App() {
     try { localStorage.setItem(LITE_KEY, on ? '1' : '0'); } catch { /* it lasts until the page closes */ }
   };
   const t = (en: string, es: string) => (lang === 1 ? es : en);
+
+  // Music: off until someone turns it on, and only from the players' own files.
+  const [musicOn, setMusicOnState] = useState(() => loadSetting(MUSIC_KEY) === '1');
+  const [volume, setVolumeState] = useState(() => {
+    const v = Number(loadSetting(VOLUME_KEY));
+    return loadSetting(VOLUME_KEY) !== null && v >= 0 && v <= 1 ? v : 0.7;
+  });
+  const [tracks, setTracks] = useState<Partial<Record<Slot, Track>>>({});
+  const [musicSheet, setMusicSheet] = useState(false);
+  const setMusicOn = (on: boolean) => { setMusicOnState(on); saveSetting(MUSIC_KEY, on ? '1' : '0'); music.setOn(on); };
+  const setVolume = (v: number) => { setVolumeState(v); saveSetting(VOLUME_KEY, String(v)); music.setVolume(v); };
+  const setTrack = (s: Slot, track: Track | null) => {
+    const next = { ...tracks };
+    if (track) next[s] = track; else delete next[s];
+    setTracks(next);
+    music.setTracks(next, s);
+  };
+  useEffect(() => {
+    music.setVolume(volume);
+    loadTracks().then((saved) => {
+      setTracks(saved);
+      music.setTracks(saved);
+      music.setOn(musicOn);
+    });
+    // Browsers start sound only from a tap; any tap will do.
+    const unlock = () => music.unlock();
+    window.addEventListener('pointerdown', unlock);
+    window.addEventListener('keydown', unlock);
+    return () => { window.removeEventListener('pointerdown', unlock); window.removeEventListener('keydown', unlock); };
+    // Once, at start-up: musicOn and volume are read from storage as they were.
+  }, []);
+  const slot = slotFor(game);
+  useEffect(() => music.want(slot), [slot]);
 
   useEffect(() => {
     try { localStorage.setItem(SAVE_KEY, JSON.stringify({ game, undo })); } catch { /* the game still works, unsaved */ }
@@ -119,6 +163,7 @@ export function App() {
         </nav>
         <div className="top-tools">
           {tab === 'game' && undo.length > 0 && <button type="button" aria-label={t('Undo', 'Deshacer')} onClick={undoMove}><span className="undo-word">{t('Undo', 'Deshacer')}</span><span className="undo-icon" aria-hidden="true">↶</span></button>}
+          <button type="button" className={musicOn ? 'music-on' : ''} aria-label={t('Music', 'Música')} onClick={() => setMusicSheet(true)}>♪</button>
           <button type="button" aria-label={t('Cambiar a español', 'Switch to English')} onClick={() => setLang(lang === 1 ? 0 : 1)}>{lang === 1 ? 'EN' : 'ES'}</button>
         </div>
       </header>
@@ -142,6 +187,7 @@ export function App() {
           {' '}{t(`Rules as of ${RULES_DATE}.`, `Reglas a ${RULES_DATE}.`)}
         </p>
       </footer>
+      {musicSheet && <MusicSheet on={musicOn} setOn={setMusicOn} volume={volume} setVolume={setVolume} tracks={tracks} setTrack={setTrack} onClose={() => setMusicSheet(false)} />}
       {sheet && <CardSheet key={sheet} id={sheet} kaycee={game.kaycee} onClose={() => setSheet(null)} />}
     </CardSheetContext.Provider>
     </LiteContext.Provider>
