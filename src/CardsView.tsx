@@ -31,9 +31,9 @@ function GroupRow({ id, i, byName }: { id: string; i: number; byName?: boolean }
   const t = useT();
   const g = byId(id);
   const meta = CARD_GROUPS.find((m) => m.id === id);
+  const open = useContext(CardSheetContext);
   if (!g || !meta) return null;
   const n = copies(g);
-  const open = useContext(CardSheetContext);
   return (
     <details className="card-group" style={{ animationDelay: `${Math.min(i, 10) * 45}ms` }}>
       <summary>
@@ -70,47 +70,45 @@ export function CardsView({ kaycee, pelts }: { kaycee: boolean; pelts: boolean }
   const found = query
     ? GROUPS.flatMap((g) => g.cards.filter((c) => plain(`${c.name[0]} ${c.name[1]}`).includes(query)).map((c) => ({ c, g, left: !inPlay(g.id, kaycee, pelts) })))
     : [];
-  const search = (
-    <input type="search" className="search" placeholder={t(['Search a card or an item', 'Buscar una carta o un objeto'])} aria-label={t(['Search a card or an item', 'Buscar una carta o un objeto'])} value={q} onChange={(e) => setQ(e.target.value)} />
-  );
-  if (query) {
-    return (
-      <>
-        <h1>{t(['Your cards', 'Vuestras cartas'])}</h1>
-        {search}
-        <ul className="found">
-          {found.map(({ c, g, left }) => (
-            <li key={c.id}>
-              <button type="button" className="found-card" onClick={() => open(c.id)}>
-                <img src={iconUrl(`backs/${g.back}`)} alt="" />
-                <span><b>{t(c.name)}</b>{left && <em>{t(['In the box this game', 'En la caja en esta partida'])}</em>}</span>
-                {CARD_NOTES[c.id]?.tutorial && <small>{t(['Tutorial', 'Tutorial'])}</small>}
-              </button>
-            </li>
-          ))}
-        </ul>
-        {!found.length && <p className="muted">{t(['No card matches.', 'Ninguna carta coincide.'])}</p>}
-      </>
-    );
-  }
+  // The search box stays at the same place in the page whatever is typed: if React rebuilt it, it
+  // would lose the focus and a phone would hide its keyboard after the first letter.
   return (
     <>
       <h1>{t(['Your cards', 'Vuestras cartas'])}</h1>
-      <p className="lead">{t(['Sort by the backs. Tap a group for its names, and a name for what the card does.', 'Separadlas por el dorso. Toca un grupo para ver los nombres, y un nombre para saber qué hace la carta.'])}</p>
-      {search}
-      <h2>{t([`Use these: ${total(used)} cards`, `Usad estas: ${total(used)} cartas`])}</h2>
-      <div className="card-groups">{used.map((m, i) => <GroupRow key={m.id} id={m.id} i={i} />)}</div>
-      <h2>{t([`Leave in the box: ${total(out)} cards`, `Dejad en la caja: ${total(out)} cartas`])}</h2>
-      {out.length === 0
-        ? <p className="muted">{t(['Nothing: you’re playing with everything.', 'Nada: jugáis con todo.'])}</p>
-        : (
-          <>
-            {sharedBack.length > 0 && (
-              <p className="warning">{t(['Careful: some of these share a back with cards you’re using, so pull them out by name. They’re marked below.', 'Ojo: algunas comparten dorso con cartas que sí usáis, así que sacadlas por su nombre. Están marcadas abajo.'])}</p>
+      {!query && <p className="lead">{t(['Sort by the backs. Tap a group for its names, and a name for what the card does.', 'Separadlas por el dorso. Toca un grupo para ver los nombres, y un nombre para saber qué hace la carta.'])}</p>}
+      <input type="search" className="search" placeholder={t(['Search a card or an item', 'Buscar una carta o un objeto'])} aria-label={t(['Search a card or an item', 'Buscar una carta o un objeto'])} value={q} onChange={(e) => setQ(e.target.value)} />
+      {query ? (
+        <>
+          <ul className="found">
+            {found.map(({ c, g, left }) => (
+              <li key={c.id}>
+                <button type="button" className="found-card" onClick={() => open(c.id)}>
+                  <img src={iconUrl(`backs/${g.back}`)} alt="" />
+                  <span><b>{t(c.name)}</b>{left && <em>{t(['In the box this game', 'En la caja en esta partida'])}</em>}</span>
+                  {CARD_NOTES[c.id]?.tutorial && <small>{t(['Tutorial', 'Tutorial'])}</small>}
+                </button>
+              </li>
+            ))}
+          </ul>
+          {!found.length && <p className="muted">{t(['No card matches.', 'Ninguna carta coincide.'])}</p>}
+        </>
+      ) : (
+        <>
+          <h2>{t([`Use these: ${total(used)} cards`, `Usad estas: ${total(used)} cartas`])}</h2>
+          <div className="card-groups">{used.map((m, i) => <GroupRow key={m.id} id={m.id} i={i} />)}</div>
+          <h2>{t([`Leave in the box: ${total(out)} cards`, `Dejad en la caja: ${total(out)} cartas`])}</h2>
+          {out.length === 0
+            ? <p className="muted">{t(['Nothing: you’re playing with everything.', 'Nada: jugáis con todo.'])}</p>
+            : (
+              <>
+                {sharedBack.length > 0 && (
+                  <p className="warning">{t(['Careful: some of these share a back with cards you’re using, so pull them out by name. They’re marked below.', 'Ojo: algunas comparten dorso con cartas que sí usáis, así que sacadlas por su nombre. Están marcadas abajo.'])}</p>
+                )}
+                <div className="card-groups out">{out.map((m, i) => <GroupRow key={m.id} id={m.id} i={i + used.length} byName={m.sharedBack} />)}</div>
+              </>
             )}
-            <div className="card-groups out">{out.map((m, i) => <GroupRow key={m.id} id={m.id} i={i + used.length} byName={m.sharedBack} />)}</div>
-          </>
-        )}
+        </>
+      )}
     </>
   );
 }
