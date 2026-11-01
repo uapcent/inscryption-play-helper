@@ -127,8 +127,18 @@ main { min-height: 72vh; }
 footer { padding-top: 8px; padding-bottom: 28px; color: var(--muted); font-size: 0.8rem; }
 footer p { margin-top: 8px; }
 footer .links { display: flex; flex-wrap: wrap; gap: 0 18px; }
-footer .install { width: 100%; margin-bottom: 8px; }
-footer .install-hint { margin: 0 0 8px; padding: 8px 12px; color: var(--text); font-size: 0.9rem; border-left: 3px solid var(--accent); background: rgb(8 4 2 / 0.72); }
+.install-hint { margin: 0; padding: 8px 12px; color: var(--text); font-size: 0.95rem; border-left: 3px solid var(--accent); background: rgb(8 4 2 / 0.72); }
+.settings-group { display: flex; flex-direction: column; align-items: flex-start; gap: 8px; padding: 12px 14px; background: rgb(8 4 2 / 0.72); border: 1px solid var(--line); border-radius: var(--radius); }
+.settings-group h3 { margin: 0; font-size: 1rem; color: var(--accent); }
+.settings-group .note { color: var(--muted); }
+.setting { width: 100%; }
+.setting small { color: var(--muted); }
+.setting input { accent-color: var(--accent); }
+.segmented { display: flex; gap: 0; }
+.segmented button { border-radius: 0; min-width: 110px; }
+.segmented button:first-child { border-radius: var(--radius) 0 0 var(--radius); }
+.segmented button:last-child { border-radius: 0 var(--radius) var(--radius) 0; border-left: 0; }
+.segmented button.on { color: var(--ink); background: var(--paper) url('/textures/paper.webp'); border-color: #000; font-weight: 700; }
 
 /* Each step is laid on the table. */
 .screen { display: flex; flex-direction: column; gap: 14px; animation: lay-down 0.42s cubic-bezier(0.2, 0.8, 0.25, 1) both; }
@@ -689,7 +699,9 @@ footer .install-hint { margin: 0 0 8px; padding: 8px 12px; color: var(--text); f
 }
 
 /* ---------- music ---------- */
-.top .music-on { color: var(--ink); background: var(--accent); border-color: #000; }
+.settings-button { position: relative; width: 44px; padding: 0; }
+.settings-button svg { width: 20px; height: 20px; fill: currentColor; }
+.music-dot { position: absolute; top: 5px; right: 5px; width: 7px; height: 7px; border-radius: 50%; background: var(--accent); box-shadow: 0 0 6px var(--accent); }
 .sheet-title { margin: 0; padding-right: 48px; font-size: 1.45rem; color: var(--paper); }
 .music-controls { display: flex; flex-wrap: wrap; align-items: center; gap: 10px 16px; }
 .music-volume { display: flex; align-items: center; gap: 10px; flex: 1; min-width: 200px; }

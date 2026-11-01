@@ -11,6 +11,7 @@ import {
   CardDraftScreen, CardsScreen, DeathScreen, DraftScreen, FirstScreen, FreshScreen, LimoncelloEndScreen, LimoncelloScreen, OverScreen, PickScreen, PlayScreen, PrepareScreen, RoundScreen, SetupScreen, type Move,
 } from './screens';
 import { MusicSheet } from './MusicSheet';
+import { SettingsSheet } from './SettingsSheet';
 import { loadTracks, music, slotFor, type Slot, type Track, type Tracks } from './music';
 import { SigilsView } from './Sigils';
 import { CardSheetContext, LangContext, LiteContext, defaultLite, noteLite, useMedia, type Lang } from './ui';
@@ -98,6 +99,7 @@ export function App() {
   });
   const [tracks, setTracks] = useState<Tracks>({});
   const [musicSheet, setMusicSheet] = useState(false);
+  const [settings, setSettings] = useState(false);
   const setMusicOn = (on: boolean) => { setMusicOnState(on); saveSetting(MUSIC_KEY, on ? '1' : '0'); music.setOn(on); };
   const setVolume = (v: number) => { setVolumeState(v); saveSetting(VOLUME_KEY, String(v)); music.setVolume(v); };
   const setSlot = (s: Slot, list: Track[]) => {
@@ -189,8 +191,10 @@ export function App() {
         </nav>
         <div className="top-tools">
           {tab === 'game' && undo.length > 0 && <button type="button" aria-label={t('Undo', 'Deshacer')} onClick={undoMove}><span className="undo-word">{t('Undo', 'Deshacer')}</span><span className="undo-icon" aria-hidden="true">↶</span></button>}
-          <button type="button" className={musicOn ? 'music-on' : ''} aria-label={t('Music', 'Música')} onClick={() => setMusicSheet(true)}>♪</button>
-          <button type="button" aria-label={t('Cambiar a español', 'Switch to English')} onClick={() => setLang(lang === 1 ? 0 : 1)}>{lang === 1 ? 'EN' : 'ES'}</button>
+          <button type="button" className="settings-button" aria-label={t('Settings', 'Ajustes')} onClick={() => setSettings(true)}>
+            <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="5" cy="12" r="2.2" /><circle cx="12" cy="12" r="2.2" /><circle cx="19" cy="12" r="2.2" /></svg>
+            {musicOn && <i className="music-dot" title={t('Music on', 'Música activada')} />}
+          </button>
         </div>
       </header>
       <div className={`layout${sideSigils ? ' with-side' : ''}`}>
@@ -204,11 +208,8 @@ export function App() {
       {sideSigils && <aside className="side-sigils" aria-label={t('Sigils', 'Sellos')}><SigilsView kaycee={game.kaycee} pelts={game.pelts} /></aside>}
       </div>
       <footer>
-        {install.how === 'prompt' && <button type="button" className="install" onClick={install.install}>{t('Install as an app: it works with no signal', 'Instalar como app: funciona sin cobertura')}</button>}
-        {install.how === 'apple' && <p className="install-hint">{t('To install it as an app, which works with no signal: Share, then Add to Home Screen.', 'Para instalarla como app, que funciona sin cobertura: Compartir y luego Añadir a pantalla de inicio.')}</p>}
         <div className="links">
-        <button type="button" className="link" onClick={() => setLite(!lite)}>{lite ? t('Light mode: on. Turn off', 'Modo ligero: activado. Desactivar') : t('Light mode: off. Turn on', 'Modo ligero: desactivado. Activar')}</button>
-        {wakeLockSupported && <button type="button" className="link" onClick={() => setAwake(!awake)}>{awake ? t('Screen stays on during a game. Turn off', 'La pantalla no se apaga durante la partida. Desactivar') : t('Screen may turn off. Keep it on during a game', 'La pantalla puede apagarse. Mantenerla encendida durante la partida')}</button>}
+        <button type="button" className="link" onClick={() => setSettings(true)}>{install.how ? t('Settings, and installing as an app', 'Ajustes, e instalar como app') : t('Settings', 'Ajustes')}</button>
         {inGame && tab === 'game' && game.phase.kind !== 'over' && <button type="button" className="link" onClick={confirmNew}>{t('Abandon this game', 'Abandonar esta partida')}</button>}
         </div>
         <p>
@@ -218,6 +219,17 @@ export function App() {
           {' '}{t(`Rules as of ${RULES_DATE}.`, `Reglas a ${RULES_DATE}.`)}
         </p>
       </footer>
+      {settings && (
+        <SettingsSheet
+          lang={lang} setLang={setLang}
+          musicOn={musicOn} setMusicOn={setMusicOn} trackCount={Object.values(tracks).reduce((n, l) => n + (l?.length ?? 0), 0)}
+          openMusic={() => { setSettings(false); setMusicSheet(true); }}
+          lite={lite} setLite={setLite}
+          awake={awake} setAwake={setAwake} awakeSupported={wakeLockSupported}
+          installHow={install.how} install={install.install}
+          onClose={() => setSettings(false)}
+        />
+      )}
       {musicSheet && <MusicSheet on={musicOn} setOn={setMusicOn} volume={volume} setVolume={setVolume} tracks={tracks} setSlot={setSlot} onClose={() => setMusicSheet(false)} />}
       {sheet && <CardSheet key={sheet} id={sheet} kaycee={game.kaycee} onClose={() => setSheet(null)} />}
     </CardSheetContext.Provider>

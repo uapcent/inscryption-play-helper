@@ -37,7 +37,7 @@ export function SetupScreen({ g, move }: ScreenProps) {
         ))}
       </Card>
       <Card title={t(['Performance', 'Rendimiento'])}>
-        <label className="toggle"><input type="checkbox" checked={lite} onChange={(e) => setLite(e.target.checked)} /><span><b>{t(['Light mode', 'Modo ligero'])}</b><small>{t(['A flat board and no animations, for phones that lag. You can change it at any time at the bottom of the page.', 'Tablero plano y sin animaciones, para móviles que van lentos. Puedes cambiarlo cuando quieras al final de la página.'])}</small></span></label>
+        <label className="toggle"><input type="checkbox" checked={lite} onChange={(e) => setLite(e.target.checked)} /><span><b>{t(['Light mode', 'Modo ligero'])}</b><small>{t(['A flat board and no animations, for phones that lag. You can change it at any time in Settings (⋯ at the top).', 'Tablero plano y sin animaciones, para móviles que van lentos. Puedes cambiarlo cuando quieras en Ajustes (⋯ arriba).'])}</small></span></label>
       </Card>
       <Next label={t(['Start', 'Empezar'])} onClick={() => move((s) => G.start(s, { kaycee, pelts, names: [names[0].trim(), names[1].trim()] }))} />
     </>
