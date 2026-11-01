@@ -68,6 +68,8 @@ export interface Game {
   prospector: { waker: Player; step: 0 | 1 | 2 } | null;
   /** The scale's tooth during a round, from -5 (5 against the first player) to 5 (5 against the second). Missing in old saves. */
   scale?: number;
+  /** The Limoncello: each player's own tooth, from 0 to 5 towards their end. Missing in old saves. */
+  teeth?: [number, number];
 }
 
 export type Rng = () => number;
@@ -158,7 +160,7 @@ export function loseLife(g: Game, p: Player): Game {
   return { ...next, phase: { kind: g.kaycee ? 'fresh' : 'death' } };
 }
 
-const nextRound = (g: Game): Game => ({ ...g, round: g.round + 1, first: g.loser, phase: { kind: 'round' }, prospector: null, scale: 0 });
+const nextRound = (g: Game): Game => ({ ...g, round: g.round + 1, first: g.loser, phase: { kind: 'round' }, prospector: null, scale: 0, teeth: undefined });
 
 /** A base game: the steps are done, on to the next round. */
 export const finishDeath = (g: Game): Game => nextRound(g);
@@ -267,11 +269,31 @@ export function finishEvent(g: Game, rng: Rng): Game {
     return { ...next, phase: { ...phase, turn: 1, activity: enter(g, phase.picks[1], rng) } };
   }
   if (phase.group === 'challenge') return nextRound(next);
-  if (isLimoncelloBreak(g)) return { ...next, phase: { kind: 'limoncello' } };
+  if (isLimoncelloBreak(g)) return { ...next, phase: { kind: 'limoncello' }, teeth: [0, 0] };
   return { ...next, phase: { kind: 'pick', group: 'challenge', tokens: drawSome(challengeTokens, 3, rng), picks: [] } };
 }
 
-export const toLimoncelloEnd = (g: Game): Game => ({ ...g, phase: { kind: 'limoncelloEnd', result: null } });
+/** A player's tooth in the Limoncello. */
+export const toothOf = (g: Pick<Game, 'teeth'>, p: Player) => g.teeth?.[p] ?? 0;
+export const isOut = (g: Pick<Game, 'teeth'>, p: Player) => toothOf(g, p) >= SCALE_MAX;
+/** Puts a player's tooth on a step, from 0 to 5. */
+export function setTooth(g: Game, p: Player, n: number): Game {
+  const v = Math.max(0, Math.min(SCALE_MAX, n));
+  if (v === toothOf(g, p)) return g;
+  const teeth: [number, number] = [toothOf(g, 0), toothOf(g, 1)];
+  teeth[p] = v;
+  return { ...g, teeth };
+}
+/** The ship's hits on a player's empty column move their tooth towards their end. */
+export const hitTooth = (g: Game, p: Player, damage = 1): Game => setTooth(g, p, toothOf(g, p) + damage);
+
+/** The fight is over. If the teeth were kept here, they already tell how it ended; it can still be changed. */
+export function toLimoncelloEnd(g: Game): Game {
+  const out = ([0, 1] as const).filter((p) => isOut(g, p)).length;
+  const used = toothOf(g, 0) + toothOf(g, 1) > 0;
+  const result = !used ? null : out === 2 ? 'none' : out === 1 ? 'one' : 'both';
+  return { ...g, phase: { kind: 'limoncelloEnd', result } };
+}
 export const limoncelloResult = (g: Game, result: 'both' | 'one' | 'none'): Game =>
   g.phase.kind === 'limoncelloEnd' ? { ...g, phase: { ...g.phase, result } } : g;
 export const finishLimoncello = (g: Game): Game => nextRound(g);

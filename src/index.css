@@ -660,7 +660,7 @@ footer button.link + button.link { margin-left: 18px; }
 .gold-tooth {
   position: absolute;
   top: 0;
-  left: calc((100% - (100% - 20px) / 11) * var(--at) + (100% - 20px) / 22);
+  left: calc((100% - (100% - 20px) / 11) * var(--at) + (100% - 20px) / 22 + var(--nudge, 0) * 9px);
   width: var(--tooth);
   height: var(--tooth);
   margin-left: calc(var(--tooth) / -2);
@@ -671,6 +671,9 @@ footer button.link + button.link { margin-left: 18px; }
 .scale-where { text-align: center; font-size: 0.88rem; color: var(--muted); }
 .scale-hits { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
 .scale-hits .hit { min-height: 48px; font-weight: 600; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; overflow-wrap: normal; }
+.scale-hit { display: grid; grid-template-columns: auto minmax(0, 1fr); gap: 4px; }
+.scale-hit > button:first-child { min-width: 44px; padding: 0 8px; }
+.scale-step:disabled { opacity: 1; cursor: default; }
 .scale-bar .warning { padding: 4px 10px; }
 .lite .scale-bar { box-shadow: none; background: #1c120b; }
 .lite .gold-tooth { filter: none; }

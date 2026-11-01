@@ -8,7 +8,7 @@ import {
 } from './content';
 import * as G from './game';
 import type { Activity, Carry, Game, Player, Token } from './game';
-import { ScaleCounter } from './ScaleCounter';
+import { LimoncelloScale, ScaleCounter } from './ScaleCounter';
 import { sigilByKey } from './Sigils';
 import { CardSheetContext, Card, Choice, Coin, D20, Die, Steps, Token as EventToken, motionMs, useLite, useMedia, useSettled, useT } from './ui';
 
@@ -602,12 +602,13 @@ export function LimoncelloScreen({ g, move }: ScreenProps) {
       <h1>{t(['The Limoncello', 'El Limoncello'])}</h1>
       <p className="lead">{t(['A boss fight you play together. It costs no lives.', 'Un combate contra un jefe que jugáis juntos. No cuesta vidas.'])}</p>
       <LimoncelloBoard names={[name(a), name(b)]} />
+      <LimoncelloScale g={g} move={move} left={a} names={[name(0), name(1)]} />
       <div className="two-col">
       <Card title={t(['Setup', 'Preparación'])} icon="nodes/bossnode_royal">
         <ul className="steps">
           <li>{t(['The ship is two cards side by side, in the middle of one row. You share the other row.', 'El barco son dos cartas juntas, en el centro de una fila. Compartís la otra fila.'])}</li>
           <li>{t(['Each player: your deck, 10 Squirrels, Smoke and items; draw 3 cards and 1 Squirrel, with no bones.', 'Cada jugador: tu mazo, 10 Ardillas, Humo y objetos; roba 3 cartas y 1 Ardilla, sin huesos.'])}</li>
-          <li>{t(['Each player has a tooth (any token will do). Both start at 0; the ship’s hits move a tooth towards its owner’s end.', 'Cada jugador tiene un diente (sirve cualquier ficha). Empiezan en 0; los golpes del barco mueven el diente hacia el extremo de su dueño.'])}</li>
+          <li>{t(['Each player has a tooth (the scale above, or any token on the table). Both start at 0; the ship’s hits move a tooth towards its owner’s end.', 'Cada jugador tiene un diente (la balanza de arriba, o cualquier ficha en la mesa). Empiezan en 0; los golpes del barco mueven el diente hacia el extremo de su dueño.'])}</li>
         </ul>
       </Card>
       <Card title={t(['Turn order', 'Orden de turnos'])}>

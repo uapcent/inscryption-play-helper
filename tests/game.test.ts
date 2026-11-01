@@ -2,7 +2,7 @@ import assert from 'node:assert/strict';
 import { test } from 'node:test';
 import {
   BOONS, DECK_TRIALS, altarBoon, canFinish, carriedNow, chooseBoon, chooseOption, chooseStone, confirmPicks, drawFirst, drawSome, finishDeath, finishEvent, finishLimoncello,
-  beginRound, leshyTrials, limoncelloResult, loseLife, newGame, scaleAgainst, setScale, tipScale, offer, pickToken, prospectorTurn, setStones, smokeFor, start, toCardDraft, toLimoncelloEnd, toPrepare, toUpgrades,
+  beginRound, leshyTrials, limoncelloResult, loseLife, newGame, scaleAgainst, setScale, tipScale, hitTooth, setTooth, toothOf, isOut, offer, pickToken, prospectorTurn, setStones, smokeFor, start, toCardDraft, toLimoncelloEnd, toPrepare, toUpgrades,
   trialResult, unpickToken, upgradeTokens, wakeProspector, type Game, type Token,
 } from '../src/game.ts';
 
@@ -269,4 +269,22 @@ test('the scale: damage moves the tooth towards a player, between 5 and 5, and r
   const after = loseLife(setScale(g, 0, 5), 0);
   assert.equal(after.scale, 0);
   assert.equal(scaleAgainst({ scale: undefined }, 1), 0, 'an old save has an even scale');
+});
+
+test('the Limoncello: each player has a tooth from 0 to 5, and the teeth tell how it ended', () => {
+  let g: Game = { ...kaycee(), phase: { kind: 'limoncello' }, teeth: [0, 0] };
+  const end = (x: Game) => { const p = toLimoncelloEnd(x).phase; return p.kind === 'limoncelloEnd' ? p.result : undefined; };
+  assert.equal(end(g), null, 'untouched teeth: no guess');
+  g = hitTooth(hitTooth(g, 1), 1, 2);
+  assert.equal(toothOf(g, 1), 3);
+  assert.equal(toothOf(g, 0), 0);
+  assert.equal(hitTooth(g, 0, -1), g, 'not below 0');
+  assert.equal(end(g), 'both');
+  g = hitTooth(g, 1, 9);
+  assert.ok(isOut(g, 1));
+  assert.equal(end(g), 'one');
+  g = setTooth(g, 0, 5);
+  assert.equal(end(g), 'none');
+  assert.equal(finishLimoncello(limoncelloResult(toLimoncelloEnd(g), 'none')).teeth, undefined);
+  assert.equal(toothOf({}, 0), 0, 'an old save has no teeth');
 });
