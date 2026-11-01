@@ -8,6 +8,7 @@ import {
 } from './content';
 import * as G from './game';
 import type { Activity, Carry, Game, Player, Token } from './game';
+import { ScaleCounter } from './ScaleCounter';
 import { sigilByKey } from './Sigils';
 import { CardSheetContext, Card, Choice, Coin, D20, Die, Steps, Token as EventToken, motionMs, useLite, useMedia, useSettled, useT } from './ui';
 
@@ -251,6 +252,7 @@ export function RoundScreen({ g, move }: ScreenProps) {
     <>
       <h1>{t([`Round ${g.round}`, `Ronda ${g.round}`])} <small>{t([`of up to ${G.maxRounds(g)}`, `de ${G.maxRounds(g)} como máximo`])}</small></h1>
       <Lives g={g} />
+      <ScaleCounter g={g} move={move} names={[name(0), name(1)]} />
       {g.first !== null && <p className="big">{t([`${name(g.first)} goes first`, `Empieza ${name(g.first)}`])}</p>}
 
       <h2>{t(['At the start of the round', 'Al empezar la ronda'])}</h2>
@@ -292,7 +294,7 @@ export function RoundScreen({ g, move }: ScreenProps) {
       {g.kaycee && <D20 />}
 
       <h2>{t(['Who lost a life?', '¿Quién ha perdido una vida?'])}</h2>
-      <p className="muted note">{t(['The scale reached 5 against them. Tap it when the round ends.', 'La balanza ha llegado a 5 en su contra. Púlsalo cuando acabe la ronda.'])}</p>
+      <p className="muted note">{t(['The scale reached 5 against them. The scale above has this button too; use these if you keep the scale on the table instead.', 'La balanza ha llegado a 5 en su contra. La balanza de arriba también tiene este botón; usad estos si lleváis la balanza en la mesa.'])}</p>
       <div className="row">
         {([0, 1] as const).map((p) => <button key={p} type="button" className="danger" onClick={() => move((s) => G.loseLife(s, p))}>{name(p)}</button>)}
       </div>

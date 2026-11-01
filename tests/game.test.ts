@@ -2,7 +2,7 @@ import assert from 'node:assert/strict';
 import { test } from 'node:test';
 import {
   BOONS, DECK_TRIALS, altarBoon, canFinish, carriedNow, chooseBoon, chooseOption, chooseStone, confirmPicks, drawFirst, drawSome, finishDeath, finishEvent, finishLimoncello,
-  leshyTrials, limoncelloResult, loseLife, newGame, offer, pickToken, prospectorTurn, setStones, smokeFor, start, toCardDraft, toLimoncelloEnd, toPrepare, toUpgrades,
+  beginRound, leshyTrials, limoncelloResult, loseLife, newGame, scaleAgainst, setScale, tipScale, offer, pickToken, prospectorTurn, setStones, smokeFor, start, toCardDraft, toLimoncelloEnd, toPrepare, toUpgrades,
   trialResult, unpickToken, upgradeTokens, wakeProspector, type Game, type Token,
 } from '../src/game.ts';
 
@@ -252,4 +252,21 @@ test('carried effects last one round', () => {
   assert.equal(carriedNow(g, 0).length, 1);
   g = { ...g, round: 3 };
   assert.equal(carriedNow(g, 0).length, 0);
+});
+
+test('the scale: damage moves the tooth towards a player, between 5 and 5, and resets with each round', () => {
+  let g = beginRound(kaycee());
+  assert.equal(g.scale, 0);
+  g = tipScale(tipScale(tipScale(g, 0), 0), 1);
+  assert.equal(scaleAgainst(g, 0), 1);
+  assert.equal(scaleAgainst(g, 1), -1);
+  g = tipScale(g, 1, 9);
+  assert.equal(scaleAgainst(g, 1), 5);
+  assert.equal(tipScale(g, 1), g, 'past 5 nothing changes');
+  g = setScale(g, 0, 4);
+  assert.equal(g.scale, -4);
+  assert.equal(setScale(g, 1, 0).scale, 0);
+  const after = loseLife(setScale(g, 0, 5), 0);
+  assert.equal(after.scale, 0);
+  assert.equal(scaleAgainst({ scale: undefined }, 1), 0, 'an old save has an even scale');
 });

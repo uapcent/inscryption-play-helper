@@ -6,7 +6,8 @@ list of sigils. English and Spanish. It has a desktop layout, and a light mode w
 
 Choose the expansions (base game, Kaycee's Mod, Pelts) and it walks you through the game: setup, the draft, each round,
 the random events between rounds, the bosses, and the death card at the end. The game is saved in the browser and every
-step can be undone. You still need the cards: the helper doesn't track the board or the scale.
+step can be undone. During a round it keeps the scale on screen: tap to move the gold tooth as damage lands, and it
+tells you when someone draws an item or loses a life. You still need the cards: the helper doesn't track the board.
 
 Unofficial and fan-made. The rules are a modified version of [CrypticCrafter's](https://www.crypticcrafter.com), with
 house rules for Kaycee's Mod. Inscryption and its art belong to Daniel Mullins Games.
