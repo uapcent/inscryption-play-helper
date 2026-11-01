@@ -202,9 +202,11 @@ export function App() {
       {sideSigils && <aside className="side-sigils" aria-label={t('Sigils', 'Sellos')}><SigilsView kaycee={game.kaycee} pelts={game.pelts} /></aside>}
       </div>
       <footer>
+        <div className="links">
         <button type="button" className="link" onClick={() => setLite(!lite)}>{lite ? t('Light mode: on. Turn off', 'Modo ligero: activado. Desactivar') : t('Light mode: off. Turn on', 'Modo ligero: desactivado. Activar')}</button>
         {wakeLockSupported && <button type="button" className="link" onClick={() => setAwake(!awake)}>{awake ? t('Screen stays on during a game. Turn off', 'La pantalla no se apaga durante la partida. Desactivar') : t('Screen may turn off. Keep it on during a game', 'La pantalla puede apagarse. Mantenerla encendida durante la partida')}</button>}
         {inGame && tab === 'game' && game.phase.kind !== 'over' && <button type="button" className="link" onClick={confirmNew}>{t('Abandon this game', 'Abandonar esta partida')}</button>}
+        </div>
         <p>
           {t('Unofficial fan-made helper. Rules modified from ', 'Ayuda no oficial hecha por un fan. Reglas modificadas a partir de las de ')}
           <a href="https://www.crypticcrafter.com" target="_blank" rel="noreferrer">CrypticCrafter</a>

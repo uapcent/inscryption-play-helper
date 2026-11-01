@@ -126,7 +126,7 @@ main, footer { width: 100%; max-width: 560px; margin: 0 auto; padding: 16px; }
 main { min-height: 72vh; }
 footer { padding-top: 8px; padding-bottom: 28px; color: var(--muted); font-size: 0.8rem; }
 footer p { margin-top: 8px; }
-footer button.link + button.link { margin-left: 18px; }
+footer .links { display: flex; flex-wrap: wrap; gap: 0 18px; }
 
 /* Each step is laid on the table. */
 .screen { display: flex; flex-direction: column; gap: 14px; animation: lay-down 0.42s cubic-bezier(0.2, 0.8, 0.25, 1) both; }
@@ -706,3 +706,29 @@ footer button.link + button.link { margin-left: 18px; }
 .music-files button { flex: none; width: 40px; min-height: 40px; padding: 0; font-size: 1.2rem; line-height: 1; }
 .music-slot-tools .button-like { position: relative; overflow: hidden; }
 .music-slot-tools input[type=file] { position: absolute; inset: 0; opacity: 0; cursor: pointer; }
+
+/* ---------- the round, on a phone: what's needed in view, the rest folded ---------- */
+.round-title { font-size: 1.6rem; }
+.lives.compact > div { min-height: 48px; padding: 4px 12px; }
+.lives.compact .candle { height: 24px; }
+.reminders summary { display: flex; flex-wrap: wrap; align-items: baseline; }
+.reminders summary::before { content: '▸'; display: inline-block; width: 1.1em; transition: transform 0.15s; }
+.reminders[open] > summary::before { transform: rotate(90deg); }
+.reminders summary::-webkit-details-marker { display: none; }
+.reminders summary { list-style: none; }
+.summary-note { font-weight: 400; color: var(--muted); white-space: pre; }
+.start-round { border-color: var(--line-strong); }
+.start-round[open] { border-color: var(--accent); }
+.start-body { display: flex; flex-direction: column; gap: 10px; padding: 0 14px 14px; }
+.start-body .steps { padding: 0 0 0 18px; }
+.carried + .carried { margin-top: 8px; }
+.carried-name { font-family: var(--heading); font-weight: 400; }
+.carried .steps { margin-top: 2px; }
+.tools-body { display: flex; flex-direction: column; gap: 10px; padding: 0 10px 12px; }
+.tools-body .d20 { padding: 0 4px; }
+.lost-by-hand { display: flex; flex-direction: column; gap: 8px; padding: 4px 4px 0; }
+.fold { margin: 2px 0; }
+.fold summary { cursor: pointer; font-weight: 700; padding: 6px 0; list-style: none; }
+.fold summary::-webkit-details-marker { display: none; }
+.fold summary::before { content: '▸'; display: inline-block; width: 1.1em; transition: transform 0.15s; }
+.fold[open] > summary::before { transform: rotate(90deg); }
