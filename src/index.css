@@ -725,11 +725,9 @@ footer .install-hint { margin: 0 0 8px; padding: 8px 12px; color: var(--text); f
   border: 2px solid #000;
   border-radius: 999px;
 }
-.damage-tools { display: flex; flex-direction: column; gap: 8px; }
-.damage-where { font-weight: 600; text-align: center; }
-.damage-hits { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 6px; }
-.damage-hits .hit { font-weight: 700; }
-.damage-tools .row button { min-width: 0; font-size: 0.92rem; line-height: 1.2; }
+/* Two lines kept for the hint, so the buttons under it never move. */
+.damage-where { display: grid; place-items: center; min-height: 3em; font-weight: 600; line-height: 1.5; text-align: center; }
+.damage-tools button { min-width: 0; font-size: 0.92rem; line-height: 1.2; }
 .damage-tools button.on { color: var(--ink); background: var(--accent); border-color: #000; }
 @media (min-width: 900px) {
   .damage-board, .bones { max-width: 520px; }

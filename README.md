@@ -8,8 +8,8 @@ Choose the expansions (base game, Kaycee's Mod, Pelts) and it walks you through 
 the random events between rounds, the bosses, and the death card at the end. The game is saved in the browser and every
 step can be undone. During a round it keeps the scale on screen: tap to move the gold tooth as damage lands, and it
 tells you when someone draws an item or loses a life. Below it, each player's bones and the damage on the card in each
-of the 8 spaces can be kept too (tap a space, then +1, +2, +3; move it along when the card moves, clear it when it
-dies). You still need the cards: the helper doesn't know which card is where.
+of the 8 spaces can be kept too (tap a space to pick it, then again for each point of damage; move it along when the
+card moves, clear it when it dies). You still need the cards: the helper doesn't know which card is where.
 
 Music is optional and comes from the players' own files (the ♪ button), one or several for each moment: the cabin,
 battles, the Prospector, the Limoncello and the end. With several, one is picked at random each time the moment

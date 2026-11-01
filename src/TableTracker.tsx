@@ -35,25 +35,27 @@ export function BonesCounter({ g, move, names }: { g: Game; move: Move; names: [
 }
 
 /**
- * The 8 spaces of the board, with the damage on the card in each. Tap a space, then add or take
- * back damage; when the card dies or leaves, clear it; when it moves, its damage moves along.
+ * The 8 spaces of the board, with the damage on the card in each. Tap a space to pick it, and tap it
+ * again for each point of damage; clear it when the card dies or leaves; when it moves, its damage
+ * moves along. The buttons stay in place, picked or not, so nothing jumps under a finger.
  */
 export function DamageBoard({ g, move, names }: { g: Game; move: Move; names: [string, string] }) {
   const t = useT();
   const [sel, setSel] = useState<[Player, number] | null>(null);
   const [moving, setMoving] = useState(false);
   const spaceName = (p: Player, c: number) => t([`${names[p]}, space ${c + 1}`, `${names[p]}, espacio ${c + 1}`]);
+  const damageText = (d: number) => (d ? t([`${d} damage`, `${d} de daño`]) : t(['no damage', 'sin daño']));
   const tap = (p: Player, c: number) => {
+    const same = !!sel && sel[0] === p && sel[1] === c;
     if (moving && sel) {
-      if (sel[0] !== p || sel[1] !== c) move((x) => G.moveDamage(x, sel, [p, c]), QUIET);
-      setSel([p, c]);
+      if (!same) move((x) => G.moveDamage(x, sel, [p, c]), QUIET);
       setMoving(false);
-      return;
+    } else if (same) {
+      move((x) => G.hurt(x, p, c, 1), QUIET);
     }
-    setSel(sel && sel[0] === p && sel[1] === c ? null : [p, c]);
+    setSel([p, c]);
   };
   const at = sel ? G.damageAt(g, ...sel) : 0;
-  const hurt = (n: number) => sel && move((x) => G.hurt(x, sel[0], sel[1], n), QUIET);
   return (
     <div className="damage-board">
       {([0, 1] as const).map((p) => (
@@ -69,7 +71,7 @@ export function DamageBoard({ g, move, names }: { g: Game; move: Move; names: [s
                   type="button"
                   className={`damage-space${d ? ' hurt' : ''}${on ? ' on' : ''}${moving && !on ? ' target' : ''}`}
                   aria-pressed={on}
-                  aria-label={`${spaceName(p, c)}: ${d ? t([`${d} damage`, `${d} de daño`]) : t(['no damage', 'sin daño'])}`}
+                  aria-label={`${spaceName(p, c)}: ${damageText(d)}${on ? t(['. Tap for 1 more damage', '. Toca para 1 más de daño']) : ''}`}
                   onClick={() => tap(p, c)}
                 >
                   {d > 0 && <span className="damage-count">{d}</span>}
@@ -79,25 +81,17 @@ export function DamageBoard({ g, move, names }: { g: Game; move: Move; names: [s
           </div>
         </div>
       ))}
-      {sel ? (
-        <div className="damage-tools">
-          <p className="damage-where" aria-live="polite">
-            {moving
-              ? t(['Tap the space the card moved to.', 'Toca el espacio al que se ha movido la carta.'])
-              : `${spaceName(...sel)}: ${at ? t([`${at} damage`, `${at} de daño`]) : t(['no damage', 'sin daño'])}`}
-          </p>
-          <div className="damage-hits">
-            <button type="button" aria-label={t(['Take 1 damage back', 'Quitar 1 de daño'])} disabled={at <= 0 || moving} onClick={() => hurt(-1)}>−1</button>
-            {[1, 2, 3].map((n) => <button key={n} type="button" className="hit" disabled={moving} onClick={() => hurt(n)}>+{n}</button>)}
-          </div>
-          <div className="row">
-            <button type="button" className={moving ? 'on' : ''} aria-pressed={moving} onClick={() => setMoving(!moving)}>{moving ? t(['Cancel the move', 'Cancelar']) : t(['It moved', 'Se ha movido'])}</button>
-            <button type="button" disabled={at <= 0 || moving} onClick={() => { move((x) => G.clearDamage(x, sel[0], sel[1]), QUIET); setSel(null); }}>{t(['It died or left: clear', 'Ha muerto o se ha ido: borrar'])}</button>
-          </div>
-        </div>
-      ) : (
-        <p className="muted note">{t(['Tap a space to mark the damage on its card.', 'Toca un espacio para apuntar el daño de su carta.'])}</p>
-      )}
+      <p className="damage-where" aria-live="polite">
+        {!sel
+          ? t(['Tap a space to pick it, then again for each point of damage.', 'Toca un espacio para elegirlo, y otra vez por cada punto de daño.'])
+          : moving
+            ? t(['Tap the space the card moved to.', 'Toca el espacio al que se ha movido la carta.'])
+            : `${spaceName(...sel)}: ${damageText(at)}`}
+      </p>
+      <div className="row damage-tools">
+        <button type="button" className={moving ? 'on' : ''} aria-pressed={moving} disabled={!sel || (!moving && at <= 0)} onClick={() => setMoving(!moving)}>{moving ? t(['Cancel the move', 'Cancelar']) : t(['It moved', 'Se ha movido'])}</button>
+        <button type="button" disabled={!sel || at <= 0 || moving} onClick={() => sel && move((x) => G.clearDamage(x, sel[0], sel[1]), QUIET)}>{t(['Clear its damage', 'Borrar su daño'])}</button>
+      </div>
     </div>
   );
 }
