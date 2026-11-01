@@ -25,6 +25,9 @@ jobs:
           cache: npm
       - run: npm ci
       - run: npm test
+      # Whole games in a phone-sized browser, offline included: a broken screen stops the deploy.
+      - run: npx playwright install --with-deps chromium
+      - run: npm run e2e
       - run: npm run build
         env:
           BASE_PATH: /${{ github.event.repository.name }}/

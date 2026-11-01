@@ -24,8 +24,11 @@ house rules for Kaycee's Mod. Inscryption and its art belong to Daniel Mullins G
 ```bash
 npm install
 npm run dev     # http://localhost:5198
-npm test
+npm test        # the rules, saves and music choices
+npm run e2e     # whole games in a phone-sized browser, offline included (builds the site first)
 ```
+
+GitHub Actions runs both on every push; on `main` they must pass before the site deploys.
 
 ## Where things are
 
