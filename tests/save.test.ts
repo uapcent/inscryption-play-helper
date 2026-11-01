@@ -17,10 +17,19 @@ test('a save from the first version keeps its game and gains a scale', () => {
   assert.equal(s.game.teeth, null);
   assert.equal(s.undo.length, 1);
   assert.equal(s.undo[0].scale, 0);
+  assert.deepEqual(s.game.bones, [0, 0]);
+  assert.deepEqual(s.game.damage, [[0, 0, 0, 0], [0, 0, 0, 0]]);
+});
+
+test('broken bones or damage go back to their starting values', () => {
+  const game = { ...newGame(), phase: { kind: 'round' as const }, bones: [2, -1], damage: [[1, 2], [0, 0, 0, 0]] };
+  const s = readSave(JSON.stringify({ version: SAVE_VERSION, game, undo: [] }));
+  assert.deepEqual(s.game.bones, [0, 0]);
+  assert.deepEqual(s.game.damage, [[0, 0, 0, 0], [0, 0, 0, 0]]);
 });
 
 test('a current save loads as it was', () => {
-  const game = { ...newGame(), phase: { kind: 'limoncello' as const }, round: 3, scale: -2, teeth: [1, 4] as [number, number] };
+  const game = { ...newGame(), phase: { kind: 'limoncello' as const }, round: 3, scale: -2, teeth: [1, 4] as [number, number], bones: [3, 8] as [number, number], damage: [[0, 2, 0, 0], [1, 0, 0, 4]] as [number[], number[]] };
   const s = readSave(JSON.stringify({ version: SAVE_VERSION, game, undo: [] }));
   assert.deepEqual(s.game, game);
 });

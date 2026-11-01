@@ -1,7 +1,7 @@
 /**
  * The flow of a game, as pure functions over a plain state, so it can be saved, undone and tested.
- * The table keeps the board and the cards: this tracks rounds, lives, the scale during a round, the
- * events between rounds and what carries over to the next round.
+ * The table keeps the cards: this tracks rounds, lives, the scale during a round, each player's bones,
+ * the damage on the cards in play, the events between rounds and what carries over to the next round.
  */
 export type Player = 0 | 1;
 export const other = (p: Player): Player => (p === 0 ? 1 : 0);
@@ -70,9 +70,20 @@ export interface Game {
   scale: number;
   /** The Limoncello: each player's own tooth, from 0 to 5 towards their end; null outside it. */
   teeth: [number, number] | null;
+  /** Each player's bones. */
+  bones: [number, number];
+  /** The damage on the card in each space: `damage[player][column]`, 0 when unhurt or empty. */
+  damage: [number[], number[]];
 }
 
 export type Rng = () => number;
+
+/** Each player has 4 spaces on the board. */
+export const COLUMNS = 4;
+export const noDamage = (): [number[], number[]] => [Array(COLUMNS).fill(0), Array(COLUMNS).fill(0)];
+/** A counter's top, so a stray tap can't run away with it. */
+const COUNT_MAX = 99;
+const count = (n: number) => Math.max(0, Math.min(COUNT_MAX, Math.round(n)));
 
 export const newGame = (): Game => ({
   kaycee: true,
@@ -87,6 +98,8 @@ export const newGame = (): Game => ({
   prospector: null,
   scale: 0,
   teeth: null,
+  bones: [0, 0],
+  damage: noDamage(),
 });
 
 export const PHASE_KINDS: Phase['kind'][] = [
@@ -139,7 +152,7 @@ export const toDraft = (g: Game): Game => ({ ...g, phase: { kind: 'draft' } });
 export const toFirst = (g: Game): Game => ({ ...g, phase: { kind: 'first' } });
 /** Round 1: chance decides, as with the Leshy card. */
 export const drawFirst = (g: Game, rng: Rng): Game => ({ ...g, first: rng() < 0.5 ? 0 : 1 });
-export const beginRound = (g: Game): Game => ({ ...g, phase: { kind: 'round' }, prospector: null, scale: 0 });
+export const beginRound = (g: Game): Game => ({ ...g, phase: { kind: 'round' }, prospector: null, scale: 0, bones: [0, 0], damage: noDamage() });
 
 /** The scale: 5 against a player costs them a life, so the tooth stays between 5 and 5. */
 export const SCALE_MAX = 5;
@@ -160,12 +173,22 @@ export function setScale(g: Game, p: Player, n: number): Game {
 export function loseLife(g: Game, p: Player): Game {
   const lost: [number, number] = [...g.lost];
   lost[p] += 1;
-  const next: Game = { ...g, lost, loser: p, prospector: null, scale: 0 };
+  // The cards leave the board; the bones stay until the players have dealt with them.
+  const next: Game = { ...g, lost, loser: p, prospector: null, scale: 0, damage: noDamage() };
   if (lost[p] >= livesTotal(g)) return { ...next, phase: { kind: 'over', winner: other(p) } };
   return { ...next, phase: { kind: g.kaycee ? 'fresh' : 'death' } };
 }
 
-const nextRound = (g: Game): Game => ({ ...g, round: g.round + 1, first: g.loser, phase: { kind: 'round' }, prospector: null, scale: 0, teeth: null });
+/** The bones a player starts a round with: a base game keeps them, Kaycee's Mod starts from its boons. */
+export function startingBones(g: Game, p: Player): number {
+  if (!g.kaycee) return g.bones[p];
+  return carriedNow(g, p).reduce((sum, c) => sum + (c.kind !== 'boon' ? 0 : c.id === 'bone_lord' ? 8 : c.id === 'lesser_bone_lord' ? 4 : 0), 0);
+}
+
+function nextRound(g: Game): Game {
+  const next: Game = { ...g, round: g.round + 1, first: g.loser, phase: { kind: 'round' }, prospector: null, scale: 0, teeth: null, damage: noDamage() };
+  return { ...next, bones: [startingBones(next, 0), startingBones(next, 1)] };
+}
 
 /** A base game: the steps are done, on to the next round. */
 export const finishDeath = (g: Game): Game => nextRound(g);
@@ -274,7 +297,7 @@ export function finishEvent(g: Game, rng: Rng): Game {
     return { ...next, phase: { ...phase, turn: 1, activity: enter(g, phase.picks[1], rng) } };
   }
   if (phase.group === 'challenge') return nextRound(next);
-  if (isLimoncelloBreak(g)) return { ...next, phase: { kind: 'limoncello' }, teeth: [0, 0] };
+  if (isLimoncelloBreak(g)) return { ...next, phase: { kind: 'limoncello' }, teeth: [0, 0], bones: [0, 0], damage: noDamage() };
   return { ...next, phase: { kind: 'pick', group: 'challenge', tokens: drawSome(challengeTokens, 3, rng), picks: [] } };
 }
 
@@ -307,3 +330,30 @@ export const wakeProspector = (g: Game, waker: Player): Game => ({ ...g, prospec
 /** A turn ended: wait, mark, strike, and again. */
 export const prospectorTurn = (g: Game): Game =>
   g.prospector ? { ...g, prospector: { ...g.prospector, step: ((g.prospector.step + 1) % 3) as 0 | 1 | 2 } } : g;
+
+/** Bones gained, or spent with a negative amount. */
+export function addBones(g: Game, p: Player, n: number): Game {
+  const v = count(g.bones[p] + n);
+  if (v === g.bones[p]) return g;
+  const bones: [number, number] = [...g.bones];
+  bones[p] = v;
+  return { ...g, bones };
+}
+
+const withDamage = (g: Game, p: Player, col: number, v: number): Game => {
+  if (col < 0 || col >= COLUMNS || v === g.damage[p][col]) return g;
+  const damage: [number[], number[]] = [[...g.damage[0]], [...g.damage[1]]];
+  damage[p][col] = v;
+  return { ...g, damage };
+};
+export const damageAt = (g: Pick<Game, 'damage'>, p: Player, col: number) => g.damage[p]?.[col] ?? 0;
+/** Damage to the card in a player's space; a negative amount takes it back. */
+export const hurt = (g: Game, p: Player, col: number, n = 1): Game => withDamage(g, p, col, count(damageAt(g, p, col) + n));
+/** The card left the space, or healed: no damage there. */
+export const clearDamage = (g: Game, p: Player, col: number): Game => withDamage(g, p, col, 0);
+/** A card moved to another space and takes its damage along; whatever was there swaps places. */
+export function moveDamage(g: Game, from: [Player, number], to: [Player, number]): Game {
+  const a = damageAt(g, ...from);
+  const b = damageAt(g, ...to);
+  return withDamage(withDamage(g, from[0], from[1], b), to[0], to[1], a);
+}

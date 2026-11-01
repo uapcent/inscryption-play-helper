@@ -144,12 +144,12 @@ export function App() {
     if (next === s.game) return s;
     return { ...s, game: next, undo: history ? [...s.undo, s.game].slice(-UNDO_LIMIT) : s.undo };
   });
-  // Undoing a step inside the same round keeps the scale where the players left it.
+  // Undoing a step inside the same round keeps the scale, the bones and the damage where the players left them.
   const undoMove = () => setSaved((s) => {
     if (!s.undo.length) return s;
     const back = s.undo[s.undo.length - 1];
     const sameStep = back.round === s.game.round && back.phase.kind === s.game.phase.kind;
-    return { ...s, game: sameStep ? { ...back, scale: s.game.scale, teeth: s.game.teeth } : back, undo: s.undo.slice(0, -1) };
+    return { ...s, game: sameStep ? { ...back, scale: s.game.scale, teeth: s.game.teeth, bones: s.game.bones, damage: s.game.damage } : back, undo: s.undo.slice(0, -1) };
   });
   const reset = () => setSaved({ version: SAVE_VERSION, game: newGame(), undo: [] });
   const confirmNew = () => {

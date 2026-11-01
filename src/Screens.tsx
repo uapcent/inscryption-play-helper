@@ -9,6 +9,7 @@ import {
 import * as G from './game';
 import type { Activity, Carry, Game, Player, Token } from './game';
 import { LimoncelloScale, ScaleCounter } from './ScaleCounter';
+import { BonesCounter, DamageBoard } from './TableTracker';
 import { sigilByKey } from './Sigils';
 import { CardSheetContext, Card, Choice, Coin, D20, Die, Steps, Token as EventToken, motionMs, useLite, useMedia, useSettled, useT } from './ui';
 
@@ -289,6 +290,13 @@ export function RoundScreen({ g, move }: ScreenProps) {
         </div>
       </details>
 
+      <Card title={t(['Bones and damage', 'Huesos y daño'])}>
+        <div className="tracker">
+          <BonesCounter g={g} move={move} names={[name(0), name(1)]} />
+          <DamageBoard g={g} move={move} names={[name(0), name(1)]} />
+        </div>
+      </Card>
+
       {carried.some((c) => c.length > 0) && (
         <Card title={t(['This round', 'Esta ronda'])}>
           {([0, 1] as const).map((p) => carried[p].length > 0 && (
@@ -420,7 +428,7 @@ export function FreshScreen({ g, move }: ScreenProps) {
           <li>{t(['Cards on the board go to the dead pile (swap cards to the swaps pile).', 'Las cartas del tablero van a la pila de muertos (las de intercambio a su montón).'])}</li>
           <li>{t(['Shuffle your dead pile and your hand into your deck. Squirrels go back to their pile and swap cards to theirs. Only the Smoke and your items stay in your hand.', 'Baraja en tu mazo tu pila de muertos y tu mano. Las Ardillas vuelven a su montón y las de intercambio al suyo. En tu mano solo se quedan el Humo y tus objetos.'])}</li>
           <li>{g.pelts
-            ? t(['Move your unused bones to your bank. Damage past 5 on the blow that took the life goes to the bank of the player who dealt it, as bones.', 'Pasa tus huesos sin usar a tu banco. El daño que pasó de 5 en el golpe que quitó la vida va al banco de quien lo hizo, en huesos.'])
+            ? <>{t(['Move your unused bones to your bank. Damage past 5 on the blow that took the life goes to the bank of the player who dealt it, as bones.', 'Pasa tus huesos sin usar a tu banco. El daño que pasó de 5 en el golpe que quitó la vida va al banco de quien lo hizo, en huesos.'])}{g.bones.some((n) => n > 0) && <b> {t(['Unused bones', 'Huesos sin usar'])}: {([0, 1] as const).map((p) => `${name(p)} ${g.bones[p]}`).join(', ')}.</b>}</>
             : t(['Your unused bones are lost.', 'Tus huesos sin usar se pierden.'])}</li>
           <li>{t(['The scale goes back to 0.', 'La balanza vuelve a 0.'])}</li>
         </ol>
@@ -632,6 +640,9 @@ export function LimoncelloScreen({ g, move }: ScreenProps) {
       <p className="lead">{t(['A boss fight you play together. It costs no lives.', 'Un combate contra un jefe que jugáis juntos. No cuesta vidas.'])}</p>
       <LimoncelloBoard names={[name(a), name(b)]} />
       <LimoncelloScale g={g} move={move} left={a} names={[name(0), name(1)]} />
+      <Card title={t(['Bones', 'Huesos'])}>
+        <BonesCounter g={g} move={move} names={[name(0), name(1)]} />
+      </Card>
       <div className="two-col">
       <Card title={t(['Setup', 'Preparación'])} icon="nodes/bossnode_royal">
         <ul className="steps">

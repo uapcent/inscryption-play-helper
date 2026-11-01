@@ -7,7 +7,9 @@ list of sigils. English and Spanish. It has a desktop layout, and a light mode w
 Choose the expansions (base game, Kaycee's Mod, Pelts) and it walks you through the game: setup, the draft, each round,
 the random events between rounds, the bosses, and the death card at the end. The game is saved in the browser and every
 step can be undone. During a round it keeps the scale on screen: tap to move the gold tooth as damage lands, and it
-tells you when someone draws an item or loses a life. You still need the cards: the helper doesn't track the board.
+tells you when someone draws an item or loses a life. Below it, each player's bones and the damage on the card in each
+of the 8 spaces can be kept too (tap a space, then +1, +2, +3; move it along when the card moves, clear it when it
+dies). You still need the cards: the helper doesn't know which card is where.
 
 Music is optional and comes from the players' own files (the ♪ button), one or several for each moment: the cabin,
 battles, the Prospector, the Limoncello and the end. With several, one is picked at random each time the moment
@@ -38,6 +40,7 @@ npm test
 | `src/CardsView.tsx`, `src/data/cards.json` | Which cards to use, by back (names and copies only) |
 | `tools/make-textures.mjs` | Generates the wood and paper textures |
 | `src/data/sigils.json` | The sigil list |
+| `src/TableTracker.tsx` | The bones and the damage on each space during a round |
 | `src/save.ts` | Reading and upgrading the saved game (`tests/save.test.ts`) |
 | `tools/service-worker.js`, `vite.config.ts` | The offline cache: the build lists every file and writes `sw.js` |
 | `tools/make-app-icons.mjs` | Draws the home-screen icons |

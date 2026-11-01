@@ -2,10 +2,10 @@
  * The saved game, in the browser's storage. Saves are checked and brought up to date when
  * loaded, so a game in progress survives a new version of the helper.
  */
-import { PHASE_KINDS, newGame, type Game } from './game.ts';
+import { COLUMNS, PHASE_KINDS, newGame, noDamage, type Game } from './game.ts';
 
 /** Bump this, and add a step in `upgradeGame`, when the shape of a Game changes. */
-export const SAVE_VERSION = 2;
+export const SAVE_VERSION = 3;
 
 export interface Saved { version: number; game: Game; undo: Game[] }
 
@@ -19,12 +19,16 @@ export function upgradeGame(raw: unknown): Game | null {
   if (!pair(raw.names, (v) => typeof v === 'string') || !pair(raw.lost, isNumber) || !isNumber(raw.round)) return null;
   const phase = raw.phase as Record<string, unknown>;
   if ((phase.kind === 'pick' || phase.kind === 'play') && !Array.isArray(phase.picks)) return null;
-  // Version 1 had no scale or teeth; anything else missing takes its starting value.
+  const counter = (v: unknown) => isNumber(v) && (v as number) >= 0;
+  const row = (v: unknown) => Array.isArray(v) && v.length === COLUMNS && v.every(counter);
+  // Version 1 had no scale or teeth, version 2 no bones or damage; anything else missing takes its starting value.
   return {
     ...newGame(),
     ...raw,
     scale: isNumber(raw.scale) ? Math.max(-5, Math.min(5, raw.scale as number)) : 0,
     teeth: pair(raw.teeth, isNumber) ? raw.teeth as [number, number] : null,
+    bones: pair(raw.bones, counter) ? raw.bones as [number, number] : [0, 0],
+    damage: pair(raw.damage, row) ? raw.damage as [number[], number[]] : noDamage(),
   } as Game;
 }
 

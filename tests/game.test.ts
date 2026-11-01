@@ -4,6 +4,7 @@ import {
   BOONS, DECK_TRIALS, altarBoon, canFinish, carriedNow, chooseBoon, chooseOption, chooseStone, confirmPicks, drawFirst, drawSome, finishDeath, finishEvent, finishLimoncello,
   beginRound, leshyTrials, limoncelloResult, loseLife, newGame, scaleAgainst, setScale, tipScale, hitTooth, setTooth, toothOf, isOut, offer, pickToken, prospectorTurn, setStones, smokeFor, start, toCardDraft, toLimoncelloEnd, toPrepare, toUpgrades,
   trialResult, unpickToken, upgradeTokens, wakeProspector, type Game, type Token,
+  addBones, clearDamage, damageAt, hurt, moveDamage,
 } from '../src/game.ts';
 
 setStones(['ability_flying', 'ability_sharp', 'ability_reach', 'ability_strafe']);
@@ -286,4 +287,49 @@ test('the Limoncello: each player has a tooth from 0 to 5, and the teeth tell ho
   assert.equal(end(g), 'none');
   assert.equal(finishLimoncello(limoncelloResult(toLimoncelloEnd(g), 'none')).teeth, null);
   assert.equal(toothOf({ teeth: null }, 0), 0, 'outside the Limoncello, no teeth');
+});
+
+test('bones go up and down but never below 0', () => {
+  let g = beginRound(kaycee());
+  assert.deepEqual(g.bones, [0, 0]);
+  g = addBones(addBones(g, 1, 1), 1, 2);
+  assert.deepEqual(g.bones, [0, 3]);
+  g = addBones(g, 1, -5);
+  assert.deepEqual(g.bones, [0, 0]);
+  assert.equal(addBones(g, 0, -1), g);
+});
+
+test('damage stays with its space, moves with its card and clears when the card goes', () => {
+  let g = beginRound(kaycee());
+  g = hurt(hurt(g, 0, 2, 2), 1, 0, 1);
+  assert.equal(damageAt(g, 0, 2), 2);
+  assert.equal(damageAt(g, 1, 0), 1);
+  g = hurt(g, 0, 2, -5);
+  assert.equal(damageAt(g, 0, 2), 0);
+  g = moveDamage(hurt(g, 0, 1, 3), [0, 1], [0, 3]);
+  assert.deepEqual(g.damage[0], [0, 0, 0, 3]);
+  g = clearDamage(g, 1, 0);
+  assert.deepEqual(g.damage, [[0, 0, 0, 3], [0, 0, 0, 0]]);
+});
+
+test('a lost life clears the damage; Kaycee’s Mod starts each round from the boons’ bones', () => {
+  let g = hurt(addBones(beginRound(kaycee()), 0, 5), 1, 1, 2);
+  g = loseLife(g, 1);
+  assert.deepEqual(g.damage, [[0, 0, 0, 0], [0, 0, 0, 0]]);
+  // The bones wait for the fresh start, which sends them to the bank.
+  assert.deepEqual(g.bones, [5, 0]);
+  g = { ...g, carry: [{ player: 1, round: 2, kind: 'boon', id: 'bone_lord' }] };
+  g = playBreak(g, seeded(3));
+  assert.equal(g.round, 2);
+  // The break may have given more boons: each Bone Lord is 8 bones, each Lesser one 4; the 5 left over are gone.
+  const fromBoons = (p: 0 | 1) => carriedNow(g, p).reduce((n, c) => n + (c.kind === 'boon' ? ({ bone_lord: 8, lesser_bone_lord: 4 } as Record<string, number>)[c.id] ?? 0 : 0), 0);
+  assert.deepEqual(g.bones, [fromBoons(0), fromBoons(1)]);
+  assert.ok(g.bones[1] >= 8);
+});
+
+test('a base game keeps the bones from one round to the next', () => {
+  let g = addBones(beginRound(base()), 0, 4);
+  g = finishDeath(loseLife(g, 1));
+  assert.equal(g.round, 2);
+  assert.deepEqual(g.bones, [4, 0]);
 });

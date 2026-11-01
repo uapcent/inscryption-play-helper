@@ -688,6 +688,53 @@ footer .install-hint { margin: 0 0 8px; padding: 8px 12px; color: var(--text); f
   .scale-bar { top: calc(var(--top-h) + 6px); max-width: 620px; }
 }
 
+/* ---------- bones and damage, on the paper card of a round ---------- */
+.tracker { display: flex; flex-direction: column; gap: 14px; }
+.bones { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.bones-player { display: flex; flex-direction: column; gap: 4px; min-width: 0; }
+.bones-player > b, .damage-name { font-family: var(--heading); font-weight: 400; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; overflow-wrap: normal; }
+.bones-row { display: grid; grid-template-columns: 44px minmax(0, 1fr) 44px; gap: 4px; align-items: center; }
+.bones-row button { padding: 0; font-size: 1.3rem; }
+.bones-count { display: inline-flex; align-items: center; justify-content: center; gap: 4px; font: 400 1.5rem/1 var(--heading); }
+.bones-count .bone { width: 30px; height: 16px; flex: none; }
+.damage-board { display: flex; flex-direction: column; gap: 8px; }
+.damage-side { display: flex; flex-direction: column; gap: 2px; }
+.damage-row { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 8px; }
+.damage-space {
+  position: relative;
+  min-height: 0;
+  aspect-ratio: 1;
+  padding: 0;
+  background: #3a2716 url('/icons/frames/card_slot.png') center / cover;
+  background-blend-mode: normal;
+  border: 2px solid #3a2716;
+  image-rendering: pixelated;
+}
+.damage-space.hurt { border-color: var(--blood); }
+.damage-space.on { border-color: var(--accent); box-shadow: 0 0 0 2px #000, 0 0 14px rgb(240 173 78 / 0.8); }
+.damage-space.target { border-style: dashed; border-color: var(--accent); }
+.damage-count {
+  display: grid;
+  place-items: center;
+  min-width: 2.1em;
+  height: 2.1em;
+  padding: 0 4px;
+  font: 400 1.3rem/1 var(--heading);
+  color: #fff3e6;
+  background: var(--blood);
+  border: 2px solid #000;
+  border-radius: 999px;
+}
+.damage-tools { display: flex; flex-direction: column; gap: 8px; }
+.damage-where { font-weight: 600; text-align: center; }
+.damage-hits { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 6px; }
+.damage-hits .hit { font-weight: 700; }
+.damage-tools .row button { min-width: 0; font-size: 0.92rem; line-height: 1.2; }
+.damage-tools button.on { color: var(--ink); background: var(--accent); border-color: #000; }
+@media (min-width: 900px) {
+  .damage-board, .bones { max-width: 520px; }
+}
+
 /* ---------- music ---------- */
 .top .music-on { color: var(--ink); background: var(--accent); border-color: #000; }
 .sheet-title { margin: 0; padding-right: 48px; font-size: 1.45rem; color: var(--paper); }
