@@ -2,7 +2,9 @@
  * Leshy's cabin: a dark wooden table lit by a candle, with paper cards laid on it.
  * Made for a phone on the table. Every animation stops under prefers-reduced-motion (at the end).
  */
+/* --top-h: the top bar's height, measured by the app; what sticks under it uses it. */
 :root {
+  --top-h: 57px;
   --bg: #0d0805;
   --wood: #21150d;
   --wood-2: #2e1e13;
@@ -431,7 +433,7 @@ footer button.link + button.link { margin-left: 18px; }
 .sigils { display: flex; flex-direction: column; gap: 14px; }
 .sigils section { display: flex; flex-direction: column; gap: 8px; }
 .sigils ul { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 8px; }
-.search { position: sticky; top: 66px; z-index: 4; box-shadow: 0 6px 14px rgb(0 0 0 / 0.7); }
+.search { position: sticky; top: calc(var(--top-h) + 8px); z-index: 4; box-shadow: 0 6px 14px rgb(0 0 0 / 0.7); }
 .sigil { display: flex; gap: 12px; padding: 12px; border-radius: var(--radius); box-shadow: inset 0 0 0 2px rgb(90 60 35 / 0.22), 0 3px 8px rgb(0 0 0 / 0.5); }
 .sigil > div { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
 .sigil b { font-family: var(--heading); font-weight: 400; }
@@ -601,7 +603,6 @@ footer button.link + button.link { margin-left: 18px; }
   .lite .scene { height: 400px; }
   .card-groups { display: grid; grid-template-columns: repeat(auto-fill, minmax(360px, 1fr)); align-items: start; gap: 10px; }
   .sigils section > ul { display: grid; grid-template-columns: repeat(auto-fill, minmax(340px, 1fr)); align-items: stretch; }
-  .search { top: 74px; }
   .coin-stage { height: 280px; }
   .d20 { justify-content: flex-start; }
 }
@@ -609,7 +610,7 @@ footer button.link + button.link { margin-left: 18px; }
   .layout { display: block; }
   .layout.with-side { display: grid; grid-template-columns: minmax(0, 1fr) 380px; gap: 8px; max-width: 1400px; margin: 0 auto; align-items: start; }
   .layout.with-side main { margin: 0; max-width: none; }
-  .side-sigils { display: block; position: sticky; top: 72px; max-height: calc(100dvh - 88px); overflow-y: auto; margin-top: 24px; padding: 0 22px 16px 4px; scrollbar-color: var(--line-strong) transparent; }
+  .side-sigils { display: block; position: sticky; top: calc(var(--top-h) + 12px); max-height: calc(100dvh - var(--top-h) - 28px); overflow-y: auto; margin-top: 24px; padding: 0 22px 16px 4px; scrollbar-color: var(--line-strong) transparent; }
   .side-sigils .search { top: 0; }
   .side-sigils .sigils section > ul { grid-template-columns: 1fr; }
   footer { max-width: 1400px; }
@@ -623,7 +624,7 @@ footer button.link + button.link { margin-left: 18px; }
 /* ---------- the scale, on screen through a round ---------- */
 .scale-bar {
   position: sticky;
-  top: 57px;
+  top: var(--top-h);
   z-index: 3;
   display: flex;
   flex-direction: column;
@@ -682,7 +683,7 @@ footer button.link + button.link { margin-left: 18px; }
 .lite .scale-bar { box-shadow: none; background: #1c120b; }
 .lite .gold-tooth { filter: none; }
 @media (min-width: 900px) {
-  .scale-bar { top: 66px; max-width: 620px; }
+  .scale-bar { top: calc(var(--top-h) + 6px); max-width: 620px; }
 }
 
 /* ---------- music ---------- */

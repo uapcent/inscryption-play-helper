@@ -4,6 +4,9 @@ import type { Game, Player } from './game';
 import type { Move } from './Screens';
 import { useT } from './ui';
 
+/** The scale has no undo history: a wrong tap is fixed by moving the tooth back. */
+const QUIET = { history: false };
+
 /** The steps, left to right: 5 towards the left player, down to 0, up to 5 towards the right one. */
 const STEPS = Array.from({ length: G.SCALE_MAX * 2 + 1 }, (_, i) => i - G.SCALE_MAX);
 /** Where a step is along the tray, from 0 (left end) to 1 (right end). */
@@ -69,7 +72,7 @@ function Tray({ ends, teeth, here, label, onStep }: {
  */
 export function ScaleCounter({ g, move, names }: { g: Game; move: Move; names: [string, string] }) {
   const t = useT();
-  const scale = g.scale ?? 0;
+  const { scale } = g;
   const at = (p: Player) => G.scaleAgainst(g, p);
   const where = scale === 0
     ? t(['The scale is even', 'La balanza está equilibrada'])
@@ -83,12 +86,12 @@ export function ScaleCounter({ g, move, names }: { g: Game; move: Move; names: [
         label={(s) => (s === 0
           ? t(['Put the tooth on 0', 'Poner el diente en el 0'])
           : t([`Put the tooth on ${Math.abs(s)} against ${names[s < 0 ? 0 : 1]}`, `Poner el diente en ${Math.abs(s)} en contra de ${names[s < 0 ? 0 : 1]}`]))}
-        onStep={(s) => () => move((x) => G.setScale(x, s < 0 ? 0 : 1, Math.abs(s)))}
+        onStep={(s) => () => move((x) => G.setScale(x, s < 0 ? 0 : 1, Math.abs(s)), QUIET)}
       />
       <p className="scale-where" aria-live="polite">{where}</p>
       <div className="scale-hits">
         {([0, 1] as const).map((p) => (
-          <button key={p} type="button" className="hit" disabled={at(p) >= G.SCALE_MAX} onClick={() => move((x) => G.tipScale(x, p, 1))}>
+          <button key={p} type="button" className="hit" disabled={at(p) >= G.SCALE_MAX} onClick={() => move((x) => G.tipScale(x, p, 1), QUIET)}>
             {t([`+1 to ${names[p]}`, `+1 a ${names[p]}`])}
           </button>
         ))}
@@ -127,7 +130,7 @@ export function LimoncelloScale({ g, move, left, names }: { g: Game; move: Move;
         label={(s) => (s === 0
           ? t(['The middle: both teeth start here', 'El centro: los dos dientes empiezan aquí'])
           : t([`Put ${names[owner(s)]}’s tooth on ${Math.abs(s)}`, `Poner el diente de ${names[owner(s)]} en el ${Math.abs(s)}`]))}
-        onStep={(s) => (s === 0 ? null : () => move((x) => G.setTooth(x, owner(s), Math.abs(s))))}
+        onStep={(s) => (s === 0 ? null : () => move((x) => G.setTooth(x, owner(s), Math.abs(s)), QUIET))}
       />
       <p className="scale-where" aria-live="polite">
         {([left, right] as const).map((p) => `${names[p]}: ${G.toothOf(g, p)}`).join(' · ')}
@@ -135,8 +138,8 @@ export function LimoncelloScale({ g, move, left, names }: { g: Game; move: Move;
       <div className="scale-hits">
         {([left, right] as const).map((p) => (
           <div key={p} className="scale-hit">
-            <button type="button" aria-label={t([`Take 1 back from ${names[p]}`, `Quitar 1 a ${names[p]}`])} disabled={G.toothOf(g, p) <= 0} onClick={() => move((x) => G.hitTooth(x, p, -1))}>−1</button>
-            <button type="button" className="hit" disabled={G.isOut(g, p)} onClick={() => move((x) => G.hitTooth(x, p, 1))}>
+            <button type="button" aria-label={t([`Take 1 back from ${names[p]}`, `Quitar 1 a ${names[p]}`])} disabled={G.toothOf(g, p) <= 0} onClick={() => move((x) => G.hitTooth(x, p, -1), QUIET)}>−1</button>
+            <button type="button" className="hit" disabled={G.isOut(g, p)} onClick={() => move((x) => G.hitTooth(x, p, 1), QUIET)}>
               {t([`+1 to ${names[p]}`, `+1 a ${names[p]}`])}
             </button>
           </div>

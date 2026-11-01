@@ -1,9 +1,11 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { RULES_DATE } from './content';
 import stones from './data/stones.json';
 import { CardSheet } from './CardSheet';
 import { CardsView } from './CardsView';
 import { newGame, setStones, type Game } from './game';
+import { SAVE_VERSION, readSave, type Saved } from './save';
+import { useWakeLock, wakeLockSupported } from './wakeLock';
 import {
   CardDraftScreen, CardsScreen, DeathScreen, DraftScreen, FirstScreen, FreshScreen, LimoncelloEndScreen, LimoncelloScreen, OverScreen, PickScreen, PlayScreen, PrepareScreen, RoundScreen, SetupScreen, type Move,
 } from './Screens';
@@ -19,16 +21,13 @@ const LANG_KEY = 'inscryption-helper:lang';
 const LITE_KEY = 'inscryption-helper:lite';
 const MUSIC_KEY = 'inscryption-helper:music';
 const VOLUME_KEY = 'inscryption-helper:volume';
+const AWAKE_KEY = 'inscryption-helper:awake';
 const UNDO_LIMIT = 50;
 
-interface Saved { game: Game; undo: Game[] }
-
 function load(): Saved {
-  try {
-    const raw = localStorage.getItem(SAVE_KEY);
-    if (raw) return JSON.parse(raw) as Saved;
-  } catch { /* no storage, or an old save: start fresh */ }
-  return { game: newGame(), undo: [] };
+  let text: string | null = null;
+  try { text = localStorage.getItem(SAVE_KEY); } catch { /* no storage: start fresh */ }
+  return readSave(text);
 }
 
 function loadLang(): Lang {
@@ -124,7 +123,7 @@ export function App() {
   useEffect(() => music.want(slot), [slot]);
 
   useEffect(() => {
-    try { localStorage.setItem(SAVE_KEY, JSON.stringify({ game, undo })); } catch { /* the game still works, unsaved */ }
+    try { localStorage.setItem(SAVE_KEY, JSON.stringify({ version: SAVE_VERSION, game, undo })); } catch { /* the game still works, unsaved */ }
   }, [game, undo]);
   useEffect(() => {
     try { localStorage.setItem(LANG_KEY, String(lang)); } catch { /* no storage */ }
@@ -139,22 +138,47 @@ export function App() {
     document.documentElement.classList.toggle('lite', lite);
   }, [lite]);
 
-  const move: Move = (f) => setSaved((s) => {
+  const move: Move = (f, { history = true } = {}) => setSaved((s) => {
     const next = f(s.game);
-    return next === s.game ? s : { game: next, undo: [...s.undo, s.game].slice(-UNDO_LIMIT) };
+    if (next === s.game) return s;
+    return { ...s, game: next, undo: history ? [...s.undo, s.game].slice(-UNDO_LIMIT) : s.undo };
   });
-  const undoMove = () => setSaved((s) => (s.undo.length ? { game: s.undo[s.undo.length - 1], undo: s.undo.slice(0, -1) } : s));
-  const reset = () => setSaved({ game: newGame(), undo: [] });
+  // Undoing a step inside the same round keeps the scale where the players left it.
+  const undoMove = () => setSaved((s) => {
+    if (!s.undo.length) return s;
+    const back = s.undo[s.undo.length - 1];
+    const sameStep = back.round === s.game.round && back.phase.kind === s.game.phase.kind;
+    return { ...s, game: sameStep ? { ...back, scale: s.game.scale, teeth: s.game.teeth } : back, undo: s.undo.slice(0, -1) };
+  });
+  const reset = () => setSaved({ version: SAVE_VERSION, game: newGame(), undo: [] });
   const confirmNew = () => {
     if (window.confirm(t('Abandon this game and start a new one?', '¿Abandonar esta partida y empezar otra?'))) reset();
   };
   const inGame = game.phase.kind !== 'setup';
 
+  // What sticks under the top bar (the scale, the sigil search) needs its real height: it wraps
+  // with long words, bigger text or another language.
+  const topRef = useRef<HTMLElement>(null);
+  useEffect(() => {
+    const top = topRef.current;
+    if (!top || typeof ResizeObserver === 'undefined') return;
+    const note = () => document.documentElement.style.setProperty('--top-h', `${Math.ceil(top.getBoundingClientRect().height)}px`);
+    note();
+    const watch = new ResizeObserver(note);
+    watch.observe(top);
+    return () => watch.disconnect();
+  }, []);
+
+  // During a game the phone stays awake: it sits on the table between taps.
+  const [awake, setAwakeState] = useState(() => loadSetting(AWAKE_KEY) !== '0');
+  const setAwake = (on: boolean) => { setAwakeState(on); saveSetting(AWAKE_KEY, on ? '1' : '0'); };
+  useWakeLock(awake && inGame && game.phase.kind !== 'over');
+
   return (
     <LangContext.Provider value={lang}>
     <LiteContext.Provider value={{ lite, setLite }}>
     <CardSheetContext.Provider value={setSheet}>
-      <header className="top">
+      <header className="top" ref={topRef}>
         <span className="brand">Inscryption</span>
         <nav className="tabs" aria-label={t('Sections', 'Secciones')}>
           <button type="button" className={tab === 'game' ? 'on' : ''} onClick={() => setTab('game')}>{t('Game', 'Partida')}</button>
@@ -179,6 +203,7 @@ export function App() {
       </div>
       <footer>
         <button type="button" className="link" onClick={() => setLite(!lite)}>{lite ? t('Light mode: on. Turn off', 'Modo ligero: activado. Desactivar') : t('Light mode: off. Turn on', 'Modo ligero: desactivado. Activar')}</button>
+        {wakeLockSupported && <button type="button" className="link" onClick={() => setAwake(!awake)}>{awake ? t('Screen stays on during a game. Turn off', 'La pantalla no se apaga durante la partida. Desactivar') : t('Screen may turn off. Keep it on during a game', 'La pantalla puede apagarse. Mantenerla encendida durante la partida')}</button>}
         {inGame && tab === 'game' && game.phase.kind !== 'over' && <button type="button" className="link" onClick={confirmNew}>{t('Abandon this game', 'Abandonar esta partida')}</button>}
         <p>
           {t('Unofficial fan-made helper. Rules modified from ', 'Ayuda no oficial hecha por un fan. Reglas modificadas a partir de las de ')}

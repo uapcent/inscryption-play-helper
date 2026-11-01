@@ -268,7 +268,6 @@ test('the scale: damage moves the tooth towards a player, between 5 and 5, and r
   assert.equal(setScale(g, 1, 0).scale, 0);
   const after = loseLife(setScale(g, 0, 5), 0);
   assert.equal(after.scale, 0);
-  assert.equal(scaleAgainst({ scale: undefined }, 1), 0, 'an old save has an even scale');
 });
 
 test('the Limoncello: each player has a tooth from 0 to 5, and the teeth tell how it ended', () => {
@@ -285,6 +284,6 @@ test('the Limoncello: each player has a tooth from 0 to 5, and the teeth tell ho
   assert.equal(end(g), 'one');
   g = setTooth(g, 0, 5);
   assert.equal(end(g), 'none');
-  assert.equal(finishLimoncello(limoncelloResult(toLimoncelloEnd(g), 'none')).teeth, undefined);
-  assert.equal(toothOf({}, 0), 0, 'an old save has no teeth');
+  assert.equal(finishLimoncello(limoncelloResult(toLimoncelloEnd(g), 'none')).teeth, null);
+  assert.equal(toothOf({ teeth: null }, 0), 0, 'outside the Limoncello, no teeth');
 });

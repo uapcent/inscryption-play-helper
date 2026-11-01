@@ -12,8 +12,11 @@ import { LimoncelloScale, ScaleCounter } from './ScaleCounter';
 import { sigilByKey } from './Sigils';
 import { CardSheetContext, Card, Choice, Coin, D20, Die, Steps, Token as EventToken, motionMs, useLite, useMedia, useSettled, useT } from './ui';
 
-/** Applies a move; the app saves it and keeps it for undo. */
-export type Move = (f: (g: Game) => Game) => void;
+/**
+ * Applies a move; the app saves it and keeps it for undo. Moves with `history: false` (the scale)
+ * are saved but not kept for undo: the players just move the tooth back.
+ */
+export type Move = (f: (g: Game) => Game, options?: { history?: boolean }) => void;
 export interface ScreenProps { g: Game; move: Move }
 
 function useNames(g: Game) {

@@ -66,10 +66,10 @@ export interface Game {
   carry: Carry[];
   /** The Prospector, in round 2 of a Kaycee's Mod game: null while asleep, then the cycle's step. */
   prospector: { waker: Player; step: 0 | 1 | 2 } | null;
-  /** The scale's tooth during a round, from -5 (5 against the first player) to 5 (5 against the second). Missing in old saves. */
-  scale?: number;
-  /** The Limoncello: each player's own tooth, from 0 to 5 towards their end. Missing in old saves. */
-  teeth?: [number, number];
+  /** The scale's tooth during a round, from -5 (5 against the first player) to 5 (5 against the second). */
+  scale: number;
+  /** The Limoncello: each player's own tooth, from 0 to 5 towards their end; null outside it. */
+  teeth: [number, number] | null;
 }
 
 export type Rng = () => number;
@@ -86,7 +86,12 @@ export const newGame = (): Game => ({
   carry: [],
   prospector: null,
   scale: 0,
+  teeth: null,
 });
+
+export const PHASE_KINDS: Phase['kind'][] = [
+  'setup', 'cards', 'prepare', 'draft', 'first', 'round', 'death', 'fresh', 'cardDraft', 'pick', 'play', 'limoncello', 'limoncelloEnd', 'over',
+];
 
 export const livesTotal = (g: Pick<Game, 'kaycee'>) => (g.kaycee ? 3 : 2);
 export const maxRounds = (g: Pick<Game, 'kaycee'>) => (g.kaycee ? 5 : 3);
@@ -140,16 +145,16 @@ export const beginRound = (g: Game): Game => ({ ...g, phase: { kind: 'round' }, 
 export const SCALE_MAX = 5;
 const towards = (p: Player) => (p === 0 ? -1 : 1);
 /** How far the tooth is towards a player's end: their damage taken, net of what they dealt. */
-export const scaleAgainst = (g: Pick<Game, 'scale'>, p: Player) => towards(p) * (g.scale ?? 0) || 0;
+export const scaleAgainst = (g: Pick<Game, 'scale'>, p: Player) => towards(p) * g.scale || 0;
 /** Damage to a player moves the tooth towards their end; a negative amount moves it back. */
 export function tipScale(g: Game, p: Player, damage = 1): Game {
-  const scale = Math.max(-SCALE_MAX, Math.min(SCALE_MAX, (g.scale ?? 0) + towards(p) * damage));
-  return scale === (g.scale ?? 0) ? g : { ...g, scale };
+  const scale = Math.max(-SCALE_MAX, Math.min(SCALE_MAX, g.scale + towards(p) * damage));
+  return scale === g.scale ? g : { ...g, scale };
 }
 /** Puts the tooth straight on a step: `n` against a player (0 is the middle). */
 export function setScale(g: Game, p: Player, n: number): Game {
   const scale = towards(p) * Math.max(0, Math.min(SCALE_MAX, n)) || 0;
-  return scale === (g.scale ?? 0) ? g : { ...g, scale };
+  return scale === g.scale ? g : { ...g, scale };
 }
 
 export function loseLife(g: Game, p: Player): Game {
@@ -160,7 +165,7 @@ export function loseLife(g: Game, p: Player): Game {
   return { ...next, phase: { kind: g.kaycee ? 'fresh' : 'death' } };
 }
 
-const nextRound = (g: Game): Game => ({ ...g, round: g.round + 1, first: g.loser, phase: { kind: 'round' }, prospector: null, scale: 0, teeth: undefined });
+const nextRound = (g: Game): Game => ({ ...g, round: g.round + 1, first: g.loser, phase: { kind: 'round' }, prospector: null, scale: 0, teeth: null });
 
 /** A base game: the steps are done, on to the next round. */
 export const finishDeath = (g: Game): Game => nextRound(g);
