@@ -3,6 +3,7 @@
  * nothing is uploaded, and the site ships no music.
  *
  * Each screen asks for a slot; a slot with no file falls back to a broader one, or to silence.
+ * A slot can hold several files: one is picked at random each time its moment starts, and loops.
  */
 import type { Game } from './game';
 
@@ -38,7 +39,18 @@ export const fallbackOf = (s: Slot) => FALLBACK[s];
 
 // ---------- the files, in IndexedDB ----------
 
-export interface Track { name: string; blob: Blob }
+export interface Track { id: string; name: string; blob: Blob }
+export type Tracks = Partial<Record<Slot, Track[]>>;
+export const newTrackId = () => `${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 8)}`;
+
+/**
+ * Which of a slot's tracks to play: any at random, but not the one that played last time,
+ * when there is another.
+ */
+export function pickTrack(list: readonly { id: string }[], last: string | undefined, rng: () => number = Math.random): number {
+  const pool = list.length > 1 ? list.map((_, i) => i).filter((i) => list[i].id !== last) : list.map((_, i) => i);
+  return pool[Math.floor(rng() * pool.length)] ?? 0;
+}
 const DB = 'inscryption-helper-music';
 const STORE = 'tracks';
 
@@ -59,33 +71,39 @@ function tx<T>(mode: IDBTransactionMode, run: (s: IDBObjectStore) => IDBRequest<
   }));
 }
 
-export async function loadTracks(): Promise<Partial<Record<Slot, Track>>> {
-  const out: Partial<Record<Slot, Track>> = {};
+export async function loadTracks(): Promise<Tracks> {
+  const out: Tracks = {};
   try {
     await Promise.all(SLOTS.map(async (s) => {
-      const t = await tx<Track | undefined>('readonly', (st) => st.get(s));
-      if (t?.blob) out[s] = t;
+      // A list per slot; the first version kept a single track.
+      const saved = await tx<Track[] | Omit<Track, 'id'> | undefined>('readonly', (st) => st.get(s));
+      // The old single track gets a fixed id, so loading it twice finds the same track.
+      const list = (Array.isArray(saved) ? saved : saved ? [{ ...saved, id: `first-${s}` }] : []).filter((t) => t.blob);
+      if (list.length) out[s] = list;
     }));
   } catch { /* no IndexedDB (a private window, say): no music */ }
   return out;
 }
-export const saveTrack = (s: Slot, t: Track) => tx('readwrite', (st) => st.put(t, s));
-export const removeTrack = (s: Slot) => tx('readwrite', (st) => st.delete(s));
+/** Saves a slot's whole list; an empty list removes it. */
+export const saveSlot = (s: Slot, list: Track[]) =>
+  tx<unknown>('readwrite', (st) => (list.length ? st.put(list, s) : st.delete(s)) as IDBRequest<unknown>);
 
 // ---------- the player ----------
 
 const FADE_S = 1.2;
 
-interface Playing { slot: Slot; el: HTMLAudioElement; url: string; gain: GainNode | null }
+interface Playing { slot: Slot; id: string; el: HTMLAudioElement; url: string; gain: GainNode | null }
 
 /**
- * Loops one track at a time and fades between them. Volume goes through Web Audio, because
+ * Loops one track at a time (each loops with itself, as in the game) and fades between them. Volume goes through Web Audio, because
  * iPhones ignore an audio element's volume; without Web Audio it falls back to the element.
  */
 class Player {
   private ctx: AudioContext | null = null;
   private master: GainNode | null = null;
-  private tracks: Partial<Record<Slot, Track>> = {};
+  private tracks: Tracks = {};
+  /** The track each slot played last, so the next time picks another. */
+  private last: Partial<Record<Slot, string>> = {};
   private now: Playing | null = null;
   private wanted: Slot | null = null;
   private on = false;
@@ -102,10 +120,10 @@ class Player {
     return this.ctx;
   }
 
-  setTracks(tracks: Partial<Record<Slot, Track>>, changed?: Slot) {
+  setTracks(tracks: Tracks) {
     this.tracks = tracks;
-    // A replaced file plays from the start; anything else keeps going if it still fits.
-    if (changed && this.now?.slot === changed) this.stop(this.now);
+    // What's playing keeps going unless its file was removed.
+    if (this.now && !tracks[this.now.slot]?.some((t) => t.id === this.now!.id)) this.stop(this.now);
     this.update();
   }
 
@@ -134,14 +152,18 @@ class Player {
   }
 
   private update() {
-    const slot = this.on && this.wanted ? resolveSlot(this.wanted, (s) => !!this.tracks[s]) : null;
+    const slot = this.on && this.wanted ? resolveSlot(this.wanted, (s) => !!this.tracks[s]?.length) : null;
     if (slot === (this.now?.slot ?? null)) return;
     if (this.now) this.stop(this.now);
     this.now = slot ? this.start(slot) : null;
   }
 
+  /** A moment starts: one of its tracks, at random. */
   private start(slot: Slot): Playing {
-    const url = URL.createObjectURL(this.tracks[slot]!.blob);
+    const list = this.tracks[slot]!;
+    const track = list[pickTrack(list, this.last[slot])];
+    this.last[slot] = track.id;
+    const url = URL.createObjectURL(track.blob);
     const el = new Audio(url);
     el.loop = true;
     const ctx = this.context();
@@ -156,7 +178,7 @@ class Player {
       el.volume = this.volume;
     }
     el.play().catch(() => { /* waits for a tap: unlock() */ });
-    return { slot, el, url, gain };
+    return { slot, id: track.id, el, url, gain };
   }
 
   private stop(p: Playing) {

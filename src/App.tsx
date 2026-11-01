@@ -8,7 +8,7 @@ import {
   CardDraftScreen, CardsScreen, DeathScreen, DraftScreen, FirstScreen, FreshScreen, LimoncelloEndScreen, LimoncelloScreen, OverScreen, PickScreen, PlayScreen, PrepareScreen, RoundScreen, SetupScreen, type Move,
 } from './Screens';
 import { MusicSheet } from './MusicSheet';
-import { loadTracks, music, slotFor, type Slot, type Track } from './music';
+import { loadTracks, music, slotFor, type Slot, type Track, type Tracks } from './music';
 import { SigilsView } from './Sigils';
 import { CardSheetContext, LangContext, LiteContext, defaultLite, noteLite, useMedia, type Lang } from './ui';
 
@@ -96,15 +96,15 @@ export function App() {
     const v = Number(loadSetting(VOLUME_KEY));
     return loadSetting(VOLUME_KEY) !== null && v >= 0 && v <= 1 ? v : 0.7;
   });
-  const [tracks, setTracks] = useState<Partial<Record<Slot, Track>>>({});
+  const [tracks, setTracks] = useState<Tracks>({});
   const [musicSheet, setMusicSheet] = useState(false);
   const setMusicOn = (on: boolean) => { setMusicOnState(on); saveSetting(MUSIC_KEY, on ? '1' : '0'); music.setOn(on); };
   const setVolume = (v: number) => { setVolumeState(v); saveSetting(VOLUME_KEY, String(v)); music.setVolume(v); };
-  const setTrack = (s: Slot, track: Track | null) => {
+  const setSlot = (s: Slot, list: Track[]) => {
     const next = { ...tracks };
-    if (track) next[s] = track; else delete next[s];
+    if (list.length) next[s] = list; else delete next[s];
     setTracks(next);
-    music.setTracks(next, s);
+    music.setTracks(next);
   };
   useEffect(() => {
     music.setVolume(volume);
@@ -187,7 +187,7 @@ export function App() {
           {' '}{t(`Rules as of ${RULES_DATE}.`, `Reglas a ${RULES_DATE}.`)}
         </p>
       </footer>
-      {musicSheet && <MusicSheet on={musicOn} setOn={setMusicOn} volume={volume} setVolume={setVolume} tracks={tracks} setTrack={setTrack} onClose={() => setMusicSheet(false)} />}
+      {musicSheet && <MusicSheet on={musicOn} setOn={setMusicOn} volume={volume} setVolume={setVolume} tracks={tracks} setSlot={setSlot} onClose={() => setMusicSheet(false)} />}
       {sheet && <CardSheet key={sheet} id={sheet} kaycee={game.kaycee} onClose={() => setSheet(null)} />}
     </CardSheetContext.Provider>
     </LiteContext.Provider>
