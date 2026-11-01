@@ -6,6 +6,7 @@ import { CardsView } from './CardsView';
 import { newGame, setStones, type Game } from './game';
 import { SAVE_VERSION, readSave, type Saved } from './save';
 import { useWakeLock, wakeLockSupported } from './wakeLock';
+import { useInstall } from './install';
 import {
   CardDraftScreen, CardsScreen, DeathScreen, DraftScreen, FirstScreen, FreshScreen, LimoncelloEndScreen, LimoncelloScreen, OverScreen, PickScreen, PlayScreen, PrepareScreen, RoundScreen, SetupScreen, type Move,
 } from './Screens';
@@ -173,6 +174,7 @@ export function App() {
   const [awake, setAwakeState] = useState(() => loadSetting(AWAKE_KEY) !== '0');
   const setAwake = (on: boolean) => { setAwakeState(on); saveSetting(AWAKE_KEY, on ? '1' : '0'); };
   useWakeLock(awake && inGame && game.phase.kind !== 'over');
+  const install = useInstall();
 
   return (
     <LangContext.Provider value={lang}>
@@ -202,6 +204,8 @@ export function App() {
       {sideSigils && <aside className="side-sigils" aria-label={t('Sigils', 'Sellos')}><SigilsView kaycee={game.kaycee} pelts={game.pelts} /></aside>}
       </div>
       <footer>
+        {install.how === 'prompt' && <button type="button" className="install" onClick={install.install}>{t('Install as an app: it works with no signal', 'Instalar como app: funciona sin cobertura')}</button>}
+        {install.how === 'apple' && <p className="install-hint">{t('To install it as an app, which works with no signal: Share, then Add to Home Screen.', 'Para instalarla como app, que funciona sin cobertura: Compartir y luego Añadir a pantalla de inicio.')}</p>}
         <div className="links">
         <button type="button" className="link" onClick={() => setLite(!lite)}>{lite ? t('Light mode: on. Turn off', 'Modo ligero: activado. Desactivar') : t('Light mode: off. Turn on', 'Modo ligero: desactivado. Activar')}</button>
         {wakeLockSupported && <button type="button" className="link" onClick={() => setAwake(!awake)}>{awake ? t('Screen stays on during a game. Turn off', 'La pantalla no se apaga durante la partida. Desactivar') : t('Screen may turn off. Keep it on during a game', 'La pantalla puede apagarse. Mantenerla encendida durante la partida')}</button>}

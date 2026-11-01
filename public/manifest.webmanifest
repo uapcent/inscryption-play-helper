@@ -1,0 +1,15 @@
+{
+  "name": "Inscryption Play Helper",
+  "short_name": "Inscryption",
+  "description": "A helper for playing the Inscryption board game: rounds, events, bosses, the scale and the sigils.",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "any",
+  "background_color": "#0d0805",
+  "theme_color": "#16100c",
+  "icons": [
+    { "src": "app-icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any maskable" },
+    { "src": "app-icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any maskable" }
+  ]
+}

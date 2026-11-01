@@ -127,6 +127,8 @@ main { min-height: 72vh; }
 footer { padding-top: 8px; padding-bottom: 28px; color: var(--muted); font-size: 0.8rem; }
 footer p { margin-top: 8px; }
 footer .links { display: flex; flex-wrap: wrap; gap: 0 18px; }
+footer .install { width: 100%; margin-bottom: 8px; }
+footer .install-hint { margin: 0 0 8px; padding: 8px 12px; color: var(--text); font-size: 0.9rem; border-left: 3px solid var(--accent); background: rgb(8 4 2 / 0.72); }
 
 /* Each step is laid on the table. */
 .screen { display: flex; flex-direction: column; gap: 14px; animation: lay-down 0.42s cubic-bezier(0.2, 0.8, 0.25, 1) both; }
