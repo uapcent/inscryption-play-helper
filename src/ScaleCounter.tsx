@@ -1,7 +1,7 @@
 import { useId, type CSSProperties } from 'react';
 import * as G from './game';
 import type { Game, Player } from './game';
-import type { Move } from './Screens';
+import type { Move } from './screens';
 import { useT } from './ui';
 
 /** The scale has no undo history: a wrong tap is fixed by moving the tooth back. */

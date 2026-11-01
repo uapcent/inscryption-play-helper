@@ -9,7 +9,7 @@ import { useWakeLock, wakeLockSupported } from './wakeLock';
 import { useInstall } from './install';
 import {
   CardDraftScreen, CardsScreen, DeathScreen, DraftScreen, FirstScreen, FreshScreen, LimoncelloEndScreen, LimoncelloScreen, OverScreen, PickScreen, PlayScreen, PrepareScreen, RoundScreen, SetupScreen, type Move,
-} from './Screens';
+} from './screens';
 import { MusicSheet } from './MusicSheet';
 import { loadTracks, music, slotFor, type Slot, type Track, type Tracks } from './music';
 import { SigilsView } from './Sigils';

@@ -33,7 +33,7 @@ npm test
 |---|---|
 | `src/game.ts` | The flow of a game, as pure functions (`tests/game.test.ts`) |
 | `src/content.ts` | The rules' text, each as `[English, Spanish]`; `RULES_DATE` is shown on the page |
-| `src/Screens.tsx` | One component per step |
+| `src/screens/` | One component per step: `start`, `round`, `between` (the breaks), `end` (the Limoncello and the end), `shared` |
 | `src/Board.tsx` | The table in pseudo-3D (CSS transforms only) |
 | `src/CardsView.tsx`, `src/data/cards.json` | Which cards to use, by back (names and copies only) |
 | `tools/make-textures.mjs` | Generates the wood and paper textures |
